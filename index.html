@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSK4 (2.0) · Bài 2 — 真正的朋友</title>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3/dist/hanzi-writer.min.js"></script>
+<script>
+/* ============ CUSTOM AUDIO PLAYER ============ */
+function formatTime(sec){
+  if(!isFinite(sec) || sec < 0) sec = 0;
+  var m = Math.floor(sec / 60);
+  var s = Math.floor(sec % 60);
+  return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
+function updateRangeFill(range){
+  var min = parseFloat(range.min) || 0, max = parseFloat(range.max) || 0, val = parseFloat(range.value) || 0;
+  var pct = max > min ? ((val - min) / (max - min)) * 100 : 0;
+  range.style.background = 'linear-gradient(to right, var(--c-text) ' + pct + '%, var(--c-text-line) ' + pct + '%)';
+}
+function toggleAudio(id){
+  var audio = document.getElementById(id);
+  if(!audio) return;
+  if(audio.paused){
+    document.querySelectorAll('.audio-player-custom audio').forEach(function(a){
+      if(a.id !== id && !a.paused) a.pause();
+    });
+    audio.play();
+  } else {
+    audio.pause();
+  }
+}
+function onAudioLoaded(id){
+  var audio = document.getElementById(id);
+  var range = document.getElementById(id + '-range');
+  var timeEl = document.getElementById(id + '-time');
+  if(range){ range.max = audio.duration || 0; updateRangeFill(range); }
+  if(timeEl){ timeEl.textContent = formatTime(0) + ' / ' + formatTime(audio.duration); }
+}
+function onAudioTimeUpdate(id){
+  var audio = document.getElementById(id);
+  var range = document.getElementById(id + '-range');
+  var timeEl = document.getElementById(id + '-time');
+  if(range){ range.value = audio.currentTime; updateRangeFill(range); }
+  if(timeEl){ timeEl.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration); }
+}
+function onRangeInput(id){
+  var audio = document.getElementById(id);
+  var range = document.getElementById(id + '-range');
+  audio.currentTime = parseFloat(range.value);
+  updateRangeFill(range);
+}
+function onAudioEnded(id){
+  var btn = document.getElementById(id + '-btn');
+  if(btn){ btn.querySelector('.apc-icon-play').style.display = ''; btn.querySelector('.apc-icon-pause').style.display = 'none'; }
+}
+function handleAudioError(id){
+  var btn = document.getElementById(id + '-btn');
+  var range = document.getElementById(id + '-range');
+  var timeEl = document.getElementById(id + '-time');
+  var tag = document.getElementById(id + '-tag');
+  if(btn) btn.style.display = 'none';
+  if(range) range.style.display = 'none';
+  if(timeEl) timeEl.style.display = 'none';
+  if(tag) tag.style.display = 'inline-block';
+}
+document.addEventListener('play', function(e){
+  if(e.target.tagName === 'AUDIO'){
+    var btn = document.getElementById(e.target.id + '-btn');
+    if(btn){ btn.querySelector('.apc-icon-play').style.display = 'none'; btn.querySelector('.apc-icon-pause').style.display = ''; }
+  }
+}, true);
+document.addEventListener('pause', function(e){
+  if(e.target.tagName === 'AUDIO'){
+    var btn = document.getElementById(e.target.id + '-btn');
+    if(btn){ btn.querySelector('.apc-icon-play').style.display = ''; btn.querySelector('.apc-icon-pause').style.display = 'none'; }
+  }
+}, true);
+</script>
+<style>
+:root{
+  --bg-app: #FFF8F6;
+  --bg-app-2: #FCEDEB;
+  --ink: #402530;
+  --ink-soft: #8C6B72;
+  --card-bg: #FFFFFF;
+  --card-line: #F3DEE0;
+  --shadow: rgba(178, 58, 72, 0.10);
+  --shadow-strong: rgba(178, 58, 72, 0.18);
+
+  --c-cover-1:#FFEADD; --c-cover-2:#FFCBDA;
+  --c-cover-title:#E8385F;
+  --c-cover-subtitle:#E8734A;
+
+  --c-warmup:#C6672A;      --c-warmup-bg:#FBE8D6;      --c-warmup-line:#EFC090;
+  --c-text:#B23A48;        --c-text-bg:#FBE3E5;        --c-text-line:#EFB4BA;
+  --c-vocab:#B2842A;       --c-vocab-bg:#FBF0D6;       --c-vocab-line:#E8CC8C;
+  --c-phonetic:#8B5FA3;    --c-phonetic-bg:#F1E6F4;    --c-phonetic-line:#D6BEDD;
+  --c-hanzi:#D63B62;       --c-hanzi-bg:#FCE3EA;       --c-hanzi-line:#F3B4C4;
+  --c-practice:#4E8C6E;    --c-practice-bg:#E4F1E9;    --c-practice-line:#A9D3BB;
+  --c-culture:#A6294F;     --c-culture-bg:#FBE2E9;     --c-culture-line:#EBACBF;
+  --c-highlight:#0E8F82;   --c-highlight-bg:#DCF2EF;   --c-highlight-line:#8CD3C9;
+  --c-summary:#7A3D64;     --c-summary-bg:#F1E4EC;     --c-summary-line:#D9B8CE;
+  --c-correct:#2F9E60;     --c-correct-bg:#DCF3E4;
+  --c-wrong:#E0435B;       --c-wrong-bg:#FCE1E5;
+
+  --bk1:#FF7A45; --bk1-bg:#FFE8DC; --bk1-line:#FFC299;
+  --bk2:#FF4081; --bk2-bg:#FFE0EC; --bk2-line:#FFAFC8;
+  --bk3:#8B5CF6; --bk3-bg:#EDE4FE; --bk3-line:#C9B3FA;
+  --bk4:#12B76A; --bk4-bg:#D8F5E6; --bk4-line:#86E3B8;
+  --bk5:#0EA5E9; --bk5-bg:#DCF1FB; --bk5-line:#92D9F5;
+
+  --font-zh: "KaiTi","Kaiti SC","STKaiti","AR PL KaitiM GB","Kaiti",serif;
+  --font-latin: "Times New Roman", Times, serif;
+
+  --sidebar-w: 236px;
+  --sidebar-w-collapsed: 60px;
+  --topbar-h: 0px;
+}
+
+*{ box-sizing:border-box; }
+html{ font-size:21px; }
+body{
+  margin:0; background:var(--bg-app); color:var(--ink);
+  font-family:var(--font-latin);
+}
+h1,h2,h3,h4,p,ul,ol,dl,dd,dt,summary{ font-family:var(--font-latin); }
+.zh, .zh *{ font-family:var(--font-zh); }
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w);
+  background:var(--card-bg); border-right:1px solid var(--card-line);
+  overflow-y:auto; overflow-x:hidden; z-index:50; transition:width .28s ease;
+}
+body.sidebar-collapsed .sidebar{ width:var(--sidebar-w-collapsed); }
+.sidebar-head{ padding:16px 14px 12px; border-bottom:1px solid var(--card-line); text-align:center; }
+.brand{ font-weight:700; font-size:0.95rem; color:var(--ink); white-space:nowrap; overflow:hidden; }
+.sub{ font-size:0.75rem; color:var(--ink-soft); margin-top:4px; white-space:nowrap; overflow:hidden; }
+body.sidebar-collapsed .sub, body.sidebar-collapsed .brand{ opacity:0; }
+
+.nav-single{ border-bottom:1px solid var(--card-line); }
+.nav-group summary, .nav-single > button{
+  display:flex; align-items:center; gap:8px; width:100%; text-align:left;
+  padding:10px 14px; background:none; border:none; cursor:pointer;
+  font-size:0.86rem; font-weight:700; color:var(--ink); list-style:none;
+}
+.nav-group summary::-webkit-details-marker{ display:none; }
+.nav-group summary .chev{ margin-left:auto; font-size:0.75rem; color:var(--ink-soft); transition:transform .2s; }
+.nav-group[open] summary .chev{ transform:rotate(90deg); }
+.nav-group{ border-bottom:1px solid var(--card-line); }
+.nav-item{
+  display:block; width:100%; text-align:left; background:none; border:none;
+  padding:7px 14px 7px 34px; font-size:0.8rem; color:var(--ink-soft); cursor:pointer;
+  border-left:3px solid transparent;
+}
+.nav-item:hover, .nav-single>button:hover{ background:var(--bg-app-2); }
+.nav-item.active, .nav-single > button.active{
+  background:var(--c-summary-bg); color:var(--c-summary); font-weight:700; border-left-color:var(--c-summary);
+}
+body.sidebar-collapsed .nav-group summary, body.sidebar-collapsed .nav-single>button{
+  justify-content:center; padding:10px 0;
+}
+body.sidebar-collapsed .nav-group summary .label,
+body.sidebar-collapsed .nav-group summary .chev,
+body.sidebar-collapsed .nav-single > button .label,
+body.sidebar-collapsed .nav-item{ display:none; }
+
+.sidebar-backdrop{ display:none; }
+
+/* ===== CONTENT COL ===== */
+.content-col{
+  margin-left:var(--sidebar-w); min-height:100vh; display:flex; flex-direction:column;
+  transition:margin-left .28s ease;
+}
+body.sidebar-collapsed .content-col{ margin-left:var(--sidebar-w-collapsed); }
+
+.main{ padding:26px 30px; flex:1 0 auto; }
+.sidebar-toggle{ background:none; border:1px solid var(--card-line); border-radius:10px; width:38px; height:38px; font-size:1.1rem; cursor:pointer; color:var(--ink); }
+
+.site-footer{
+  background:var(--bg-app);
+  color:var(--ink-soft); display:flex; align-items:center; justify-content:center;
+  font-size:0.8rem; padding:12px 0; flex:0 0 auto; text-align:center;
+}
+
+.slide{ display:none; }
+.slide.active{ display:block; animation:fadeIn .35s ease; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.slide-card{
+  background:var(--card-bg); border:1px solid var(--card-line); border-radius:26px;
+  box-shadow:0 10px 28px var(--shadow); padding:34px 40px; min-height:60vh;
+}
+
+.eyebrow{ display:flex; width:max-content; align-items:center; gap:8px; font-size:0.85rem; font-weight:700; letter-spacing:.02em; padding:5px 14px; border-radius:999px; margin:0 auto 14px; }
+.eyebrow.warmup{ color:var(--c-warmup); background:var(--c-warmup-bg); border:1px solid var(--c-warmup-line); }
+.eyebrow.text{ color:var(--c-text); background:var(--c-text-bg); border:1px solid var(--c-text-line); }
+.eyebrow.vocab{ color:var(--c-vocab); background:var(--c-vocab-bg); border:1px solid var(--c-vocab-line); }
+.eyebrow.practice{ color:var(--c-practice); background:var(--c-practice-bg); border:1px solid var(--c-practice-line); }
+.eyebrow.review{ color:var(--c-highlight); background:var(--c-highlight-bg); border:1px solid var(--c-highlight-line); }
+.eyebrow.culture{ color:var(--c-culture); background:var(--c-culture-bg); border:1px solid var(--c-culture-line); }
+
+.slide h2{ font-size:2rem; margin:0 0 6px; color:var(--ink); text-align:center; }
+.slide .subtitle{ font-size:1.1rem; color:var(--ink-soft); margin:0 0 20px; text-align:center; }
+
+/* ===== COVER ===== */
+.cover-slide .slide-card{
+  background:linear-gradient(135deg, var(--c-cover-1), var(--c-cover-2));
+  color:var(--ink); display:flex; flex-direction:column; align-items:center; justify-content:center;
+  height:calc(100vh - 52px); min-height:0; overflow:hidden;
+  padding:32px 60px; text-align:center;
+}
+.cover-badge{ flex:0 0 auto; background:rgba(43,36,64,0.08); border:1px solid rgba(43,36,64,0.14); border-radius:999px; padding:6px 16px; font-size:0.85rem; font-weight:700; margin-bottom:18px; }
+.cover-slide h1.zh{
+  flex:0 0 auto; font-size:clamp(2.2rem, 5vw, 4.2rem); margin:0 0 6px; line-height:1.1;
+  color:var(--c-cover-title);
+  text-shadow:0 1px 2px rgba(64,37,48,0.10);
+}
+.cover-slide .cover-vi{
+  flex:0 0 auto; font-size:clamp(1.2rem, 2.6vw, 2rem); margin:0 0 16px; letter-spacing:.01em; font-weight:700;
+  color:var(--c-cover-subtitle);
+  text-shadow:0 1px 2px rgba(64,37,48,0.08);
+}
+@media (max-width:600px){
+  .cover-slide .slide-card{ height:calc(100vh - 36px); padding:24px 20px; }
+}
+.cover-image-ph{
+  width:100%; max-width:960px; margin-top:6px;
+  flex:1 1 auto; min-height:0;
+  border-radius:18px; border:1.5px dashed rgba(43,36,64,0.28);
+  background:rgba(255,255,255,0.35);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  color:var(--ink); text-align:center; padding:16px;
+}
+.cover-image-ph .ph-icon{ font-size:2rem; }
+.cover-image-ph .ph-hint{ font-size:0.85rem; font-weight:700; opacity:0.75; max-width:80%; }
+.cover-image{ width:100%; max-width:960px; flex:1 1 auto; min-height:0; border-radius:18px; margin-top:6px; display:block; object-fit:cover; }
+
+/* ===== SURVEY TABLE (khoi dong 2) ===== */
+.survey-table{ width:100%; border-collapse:collapse; font-size:0.95rem; margin-top:14px; }
+.survey-table th{ background:var(--c-warmup-bg); color:var(--c-warmup); padding:14px 12px; border:1px solid var(--c-warmup-line); }
+.survey-table td{ padding:20px 14px; border:1px solid var(--card-line); text-align:left; }
+.survey-table .zh{ font-size:1.5rem; }
+
+.student-select-bar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; }
+.ssb-label{ font-size:0.9rem; font-weight:700; color:var(--ink-soft); }
+.student-btn{
+  border:2px solid var(--sc); color:var(--sc); background:#fff; border-radius:999px;
+  padding:7px 18px; font-weight:700; font-size:0.88rem; cursor:pointer; transition:background .15s, color .15s;
+}
+.student-btn:hover{ background:color-mix(in srgb, var(--sc) 12%, #fff); }
+.student-btn.active{ background:var(--sc); color:#fff; box-shadow:0 3px 8px var(--shadow); }
+
+.survey-cell{
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  padding:6px 4px; border-radius:10px; min-height:34px;
+}
+.survey-cell:hover{ background:var(--bg-app-2); }
+.survey-dots{ display:inline-flex; gap:4px; flex:0 0 auto; min-width:22px; }
+.survey-dot{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:20px; height:20px; border-radius:50%; color:#fff; font-size:0.72rem; font-weight:700;
+  box-shadow:0 2px 5px rgba(0,0,0,0.18); animation:dotPop .18s ease;
+}
+@keyframes dotPop{ from{ transform:scale(0.4); opacity:0; } to{ transform:scale(1); opacity:1; } }
+.dot-s1{ background:var(--c-hanzi); }
+.dot-s2{ background:var(--c-practice); }
+.dot-s3{ background:var(--c-phonetic); }
+.survey-label{ line-height:1.5; }
+
+/* ===== MATCH GAME ===== */
+.match-status{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:10px; }
+.match-status-actions{ display:flex; align-items:center; gap:10px; }
+.progress-text{ font-weight:700; color:var(--c-warmup); }
+.btn-reset{ background:var(--c-warmup-bg); border:1px solid var(--c-warmup-line); color:var(--c-warmup); border-radius:10px; padding:7px 14px; cursor:pointer; font-weight:700; }
+.btn-icon-only{ width:38px; height:38px; padding:0; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:1.05rem; }
+.match-words-grid.hide-pinyin .pinyin{ display:none; }
+.match-wrap{ display:flex; flex-direction:row-reverse; align-items:center; justify-content:center; gap:32px; }
+.match-images-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; flex:1 1 auto; min-width:0; max-width:1100px; }
+.match-words-grid{ display:grid; grid-template-columns:repeat(1,1fr); gap:14px; flex:0 0 240px; width:240px; }
+@media (max-width:900px){
+  .match-wrap{ flex-direction:column; justify-content:flex-start; }
+  .match-images-grid{ width:100%; flex:none; min-width:0; }
+  .match-words-grid{ grid-template-columns:repeat(3,1fr); width:100%; max-width:720px; flex:none; }
+}
+.match-word{ padding:14px 12px; border-radius:16px; border:2px solid var(--card-line); background:var(--card-bg); cursor:pointer; text-align:center; }
+.match-word .zh{ font-size:1.55rem; display:block; }
+.match-word .pinyin{ font-style:italic; color:var(--ink-soft); font-size:1.05rem; display:block; margin-top:4px; }
+.match-word.selected{ border-color:var(--c-warmup); background:var(--c-warmup-bg); }
+
+.match-word.matched{ border-color:#3CAE6E; background:#E9F9EF; color:#1F8A4C; cursor:default; }
+.match-word.wrong{ border-color:#E15656; background:#FDEAEA; animation:shake .35s; }
+
+/* ===== VONG QUAY ON TAP ===== */
+.wheel-wrap{ display:flex; flex-direction:column; align-items:center; margin:10px 0 24px; position:relative; }
+.wheel-pointer{ font-size:1.8rem; color:var(--c-practice); margin-bottom:-8px; z-index:3; text-shadow:0 2px 4px rgba(0,0,0,0.2); }
+.wheel-disc{
+  width:260px; height:260px; border-radius:50%; position:relative; margin:0 auto;
+  box-shadow:0 12px 32px var(--shadow-strong); border:7px solid #fff; cursor:pointer;
+  transition:transform 3.6s cubic-bezier(.13,.75,.1,1);
+  background:conic-gradient(
+    var(--c-vocab-bg) 0deg 45deg, var(--c-highlight-bg) 45deg 90deg,
+    var(--c-vocab-bg) 90deg 135deg, var(--c-highlight-bg) 135deg 180deg,
+    var(--c-vocab-bg) 180deg 225deg, var(--c-highlight-bg) 225deg 270deg,
+    var(--c-vocab-bg) 270deg 315deg, var(--c-highlight-bg) 315deg 360deg);
+}
+.wheel-slice{
+  position:absolute; top:50%; left:50%; width:0; height:0;
+  transform-origin:0 0;
+  font-size:1.5rem;
+}
+.wheel-slice span{ position:absolute; transform:translate(-50%,-50%); white-space:nowrap; }
+.wheel-center{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:84px; height:84px; border-radius:50%; background:#fff; color:var(--c-practice);
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  font-weight:700; font-size:0.82rem; line-height:1.3; text-align:center;
+  box-shadow:0 4px 14px var(--shadow-strong); border:2px solid var(--c-practice-line);
+}
+.wheel-center:hover{ background:var(--c-practice-bg); }
+.wheel-result{
+  max-width:840px; margin:0 auto; background:var(--card-bg); border:1.5px solid var(--card-line);
+  border-radius:20px; padding:26px 36px; text-align:center; box-shadow:0 8px 22px var(--shadow);
+  animation:fadeIn .35s ease;
+}
+.wr-tag{ display:inline-block; padding:4px 14px; border-radius:999px; font-size:0.95rem; font-weight:700; margin-bottom:12px; }
+.wr-tag.vocab{ color:var(--c-vocab); background:var(--c-vocab-bg); border:1px solid var(--c-vocab-line); }
+.wr-tag.question{ color:var(--c-highlight); background:var(--c-highlight-bg); border:1px solid var(--c-highlight-line); }
+.wr-content{ font-size:2.05rem; color:var(--ink); line-height:1.5; margin-bottom:8px; }
+.wr-reveal-btn{ background:var(--c-vocab-bg); border:1px solid var(--c-vocab-line); color:var(--c-vocab); border-radius:10px; padding:7px 16px; font-weight:700; font-size:1.02rem; cursor:pointer; margin-bottom:6px; }
+.wr-reveal-btn:hover{ background:var(--c-vocab); color:#fff; }
+.wr-sub{ font-size:1.1rem; color:var(--ink-soft); }
+.wr-quiz-sentence{ font-size:2.15rem; color:var(--ink); line-height:1.6; margin-bottom:18px; }
+.wr-quiz-blank{ display:inline-block; min-width:2.6em; border-bottom:2.5px solid var(--c-vocab); color:var(--c-vocab); font-weight:700; text-align:center; }
+.wr-quiz-options{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:10px; }
+.wr-quiz-opt{ background:var(--c-vocab-bg); border:1.5px solid var(--c-vocab-line); color:var(--ink); border-radius:12px; padding:10px 20px; font-size:1.5rem; font-weight:700; cursor:pointer; transition:transform .12s ease; }
+.wr-quiz-opt:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 4px 10px var(--shadow); }
+.wr-quiz-opt:disabled{ cursor:default; }
+.wr-quiz-opt.correct{ background:var(--c-practice); border-color:var(--c-practice); color:#fff; }
+.wr-quiz-opt.wrong{ background:#FDEAEA; border-color:#E15656; color:#B23A3A; animation:shake .35s; }
+.wr-quiz-feedback{ font-size:1.1rem; font-weight:700; min-height:1.3em; }
+.wr-quiz-feedback.ok{ color:var(--c-practice); }
+.wr-quiz-feedback.no{ color:#B23A3A; }
+@media (max-width:600px){
+  .wheel-disc{ width:210px; height:210px; }
+  .wr-content{ font-size:1.6rem; }
+  .wr-quiz-sentence{ font-size:1.65rem; white-space:normal; }
+  .wr-quiz-opt{ font-size:1.25rem; padding:8px 16px; }
+}
+.match-img{
+  width:96%; aspect-ratio:4/3; position:relative; margin:0 auto;
+  border-radius:14px; border:2px dashed var(--card-line); cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px;
+  background:var(--bg-app-2); padding:12px;
+}
+.match-img .img-letter{
+  position:absolute; top:10px; left:10px; width:26px; height:26px; border-radius:8px;
+  background:var(--ink); color:#fff; display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:0.85rem; z-index:2;
+}
+.match-img-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:12px; z-index:1; }
+.match-img .ph-icon{ font-size:4rem; }
+.match-img .ph-hint{ font-size:0.82rem; color:var(--ink-soft); font-weight:700; letter-spacing:.01em; text-align:center; line-height:1.4; }
+.match-img.selected{ border-color:var(--c-warmup); border-style:solid; background:var(--c-warmup-bg); }
+.match-img.matched{ border-color:#3CAE6E; border-style:solid; background:#E9F9EF; }
+.match-img.wrong{ border-color:#E15656; border-style:solid; animation:shake .35s; }
+@keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+
+/* ===== TEACHER NOTE ===== */
+
+/* ===== VOCAB TABLE (Tong hop tu moi) ===== */
+table.vocab-table{ width:100%; border-collapse:collapse; font-size:0.95rem; }
+table.vocab-table th{ background:var(--c-vocab-bg); color:var(--c-vocab); text-align:left; padding:10px 12px; border-bottom:2px solid var(--c-vocab-line); }
+table.vocab-table td{ padding:10px 12px; border-bottom:1px solid var(--card-line); vertical-align:middle; }
+table.vocab-table tr:hover td{ background:var(--bg-app-2); cursor:pointer; }
+table.vocab-table .t-hanzi{ font-size:1.4rem; color:var(--ink); font-weight:700; }
+table.vocab-table .t-hanzi.bk1{ color:var(--bk1); }
+table.vocab-table .t-hanzi.bk2{ color:var(--bk2); }
+table.vocab-table .t-hanzi.bk3{ color:var(--bk3); }
+table.vocab-table .t-hanzi.bk4{ color:var(--bk4); }
+table.vocab-table .t-hanzi.bk5{ color:var(--bk5); }
+.bk-badge{ display:inline-block; padding:2px 10px; border-radius:999px; font-size:0.78rem; font-weight:700; border:1px solid transparent; }
+.bk-badge.bk1{ color:var(--bk1); background:var(--bk1-bg); border-color:var(--bk1-line); }
+.bk-badge.bk2{ color:var(--bk2); background:var(--bk2-bg); border-color:var(--bk2-line); }
+.bk-badge.bk3{ color:var(--bk3); background:var(--bk3-bg); border-color:var(--bk3-line); }
+.bk-badge.bk4{ color:var(--bk4); background:var(--bk4-bg); border-color:var(--bk4-line); }
+.bk-badge.bk5{ color:var(--bk5); background:var(--bk5-bg); border-color:var(--bk5-line); }
+
+/* ===== FLOATING BUTTONS ===== */
+.back-to-top-btn{
+  position:fixed; bottom:24px; left:32px; z-index:35; width:26px; height:26px; border-radius:50%;
+  border:1px solid var(--card-line); background:#fff; box-shadow:0 6px 18px var(--shadow);
+  display:flex; align-items:center; justify-content:center; color:var(--ink); cursor:pointer;
+  font-size:0.65rem; opacity:0; pointer-events:none; transform:translateY(10px);
+  transition:opacity .25s ease, transform .25s ease, background .2s ease, color .2s ease, border-color .2s ease;
+}
+.back-to-top-btn.show{ opacity:0.5; pointer-events:auto; transform:translateY(0); }
+.back-to-top-btn:hover{ opacity:1; background:var(--c-summary); color:#fff; border-color:var(--c-summary); }
+
+.image-guide-btn{
+  position:fixed; top:16px; right:20px; z-index:35;
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--card-line);
+  background:var(--card-bg); color:var(--ink-soft); font-size:1rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0.38; box-shadow:0 4px 10px var(--shadow);
+  transition:opacity .2s ease, transform .2s ease, top .2s ease;
+}
+
+.image-guide-btn:hover{ opacity:1; transform:scale(1.08); }
+
+.fullscreen-btn{
+  position:fixed; top:16px; right:66px; z-index:35;
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--card-line);
+  background:var(--card-bg); color:var(--ink-soft); font-size:1rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0.38; box-shadow:0 4px 10px var(--shadow);
+  transition:opacity .2s ease, transform .2s ease, top .2s ease;
+}
+
+.fullscreen-btn:hover{ opacity:1; transform:scale(1.08); }
+.fullscreen-btn.is-full{ opacity:0.6; color:var(--c-summary); border-color:var(--c-summary-line); }
+
+/* ===== BAI KHOA: LAYOUT CHUNG + ANH MINH HOA ===== */
+.text-layout{ display:flex; gap:24px; align-items:flex-start; }
+.text-layout-main{ flex:1 1 0; min-width:0; }
+.text-illustration-col{ flex:0 0 320px; position:sticky; top:calc(var(--topbar-h) + 20px); }
+.cb-jump-btn{
+  position:absolute; top:-12px; right:-12px; width:36px; height:36px; border-radius:50%;
+  border:1.5px solid var(--c-text-line); background:#fff; color:var(--c-text);
+  font-size:1.05rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 10px var(--shadow); z-index:5;
+}
+.cb-jump-btn:hover{ background:var(--c-text); color:#fff; }
+.text-illustration-ph{
+  width:100%; aspect-ratio:3/5; border-radius:18px; border:1.5px dashed var(--c-text-line);
+  background:var(--c-text-bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  color:var(--c-text); text-align:center; padding:16px;
+}
+.text-illustration-ph .ph-icon{ font-size:1.8rem; }
+.text-illustration-ph .ph-hint{ font-size:0.78rem; font-weight:700; opacity:0.8; max-width:85%; line-height:1.5; }
+.text-illustration{
+  width:100%; aspect-ratio:3/5; border-radius:18px; display:block; object-fit:contain;
+  background:var(--c-text-bg);
+  box-shadow:0 8px 20px var(--shadow); border:1.5px solid var(--c-text-line);
+}
+@media (max-width:900px){
+  .text-layout{ flex-direction:column; }
+  .text-illustration-col{ position:relative; flex:0 0 auto; width:100%; max-width:260px; margin:0 auto; }
+}
+.culture-block{ display:flex; gap:32px; align-items:center; margin-bottom:34px; }
+.culture-block.reverse{ flex-direction:row-reverse; }
+.culture-block-media{ flex:0 0 70%; }
+.culture-block-text{ flex:0 0 30%; min-width:0; }
+.culture-illustration-ph{
+  width:100%; aspect-ratio:4/3; border-radius:20px; border:1.5px dashed var(--c-culture-line);
+  background:var(--c-culture-bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  color:var(--c-culture); text-align:center; padding:20px;
+}
+.culture-illustration-ph .ph-icon{ font-size:2.4rem; }
+.culture-illustration-ph .ph-hint{ font-size:0.85rem; font-weight:700; opacity:0.85; line-height:1.5; max-width:90%; }
+.culture-illustration{
+  width:100%; aspect-ratio:4/3; border-radius:20px; display:block; object-fit:cover;
+  background:var(--c-culture-bg);
+  box-shadow:0 10px 26px var(--shadow); border:1.5px solid var(--c-culture-line);
+}
+.culture-block-title{ font-weight:700; color:var(--c-culture); font-size:1.05rem; margin-bottom:8px; }
+@media (max-width:900px){
+  .culture-block, .culture-block.reverse{ flex-direction:column; }
+  .culture-block-media{ flex:0 0 auto; width:100%; max-width:100%; margin:0 auto; }
+  .culture-block-text{ flex:0 0 auto; width:100%; }
+}
+
+/* --- Culture slide: hero + 3 the ngang --- */
+.culture-hero{ display:flex; gap:30px; align-items:stretch; margin-bottom:26px; }
+.culture-hero-media{ flex:1 1 0; min-width:0; }
+.culture-hero-media .culture-illustration,
+.culture-hero-media .culture-illustration-ph{ aspect-ratio:16/9; width:100%; height:100%; }
+.culture-hero-text{
+  flex:0 0 34%; min-width:0; display:flex; flex-direction:column; justify-content:center;
+  background:linear-gradient(135deg, var(--c-culture-bg), var(--bg-app-2));
+  border:1.5px solid var(--c-culture-line); border-radius:20px; padding:24px 28px;
+}
+.culture-hero-hanzi{ font-size:2rem; font-weight:700; color:var(--c-culture); line-height:1.35; margin-bottom:6px; }
+.culture-hero-pinyin{ font-family:var(--font-latin); font-style:italic; color:var(--ink-soft); font-size:1.02rem; margin-bottom:6px; }
+.culture-hero-meaning{ font-size:1.15rem; font-weight:700; color:var(--ink); margin-bottom:16px; }
+.culture-cards-row{ display:flex; gap:20px; margin-bottom:28px; align-items:stretch; }
+.culture-card{
+  flex:1 1 0; min-width:0; background:var(--bg-app-2); border:1px solid var(--card-line);
+  border-radius:16px; padding:18px 20px;
+}
+.culture-card.highlight{ background:var(--c-culture-bg); border-color:var(--c-culture-line); }
+.culture-card-title{ font-weight:700; font-size:1.08rem; color:var(--ink); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+@media (max-width:1000px){
+  .culture-hero{ flex-direction:column; }
+  .culture-hero-media{ width:100%; }
+  .culture-cards-row{ flex-direction:column; }
+}
+
+/* ===== ON TAP - DIEN TU ===== */
+.fb-group{ margin-bottom:36px; }
+.fb-group:last-child{ margin-bottom:0; }
+.fb-group-title{ font-weight:700; color:var(--c-vocab); font-size:1.2rem; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.fb-hint{ text-align:center; font-size:1rem; color:var(--ink-soft); margin:-6px 0 22px; }
+.fb-hint b{ color:var(--ink); }
+.fb-bank{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:20px; min-height:46px; }
+.fb-chip{
+  background:var(--c-vocab-bg); border:1.5px solid var(--c-vocab-line); color:var(--c-vocab);
+  font-weight:700; border-radius:999px; padding:9px 22px; font-size:1.4rem;
+  position:relative; z-index:1; cursor:grab; touch-action:none;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent;
+  transition:background .15s, border-color .15s, color .15s, box-shadow .15s;
+}
+.fb-chip.dragging{ cursor:grabbing; z-index:80; box-shadow:0 10px 22px var(--shadow-strong); }
+.fb-chip.chip-wrong{ background:var(--c-wrong-bg); border-color:var(--c-wrong); color:var(--c-wrong); }
+.fb-chip.chip-correct{ background:var(--c-correct-bg); border-color:var(--c-correct); color:var(--c-correct); cursor:default; padding:7px 18px; font-size:1.28rem; }
+.fb-list{ display:flex; flex-direction:column; gap:12px; }
+.fb-item{ background:var(--card-bg); border:1px solid var(--card-line); border-radius:14px; padding:14px 18px; display:flex; gap:12px; align-items:flex-start; }
+.fb-num{ flex:none; width:32px; height:32px; border-radius:50%; background:var(--c-vocab-bg); color:var(--c-vocab); font-weight:700; display:flex; align-items:center; justify-content:center; font-size:1.05rem; margin-top:2px; }
+.fb-body{ flex:1 1 0; min-width:0; }
+.fb-sentence{ font-size:1.45rem; line-height:1.85; }
+.fb-turn{ display:block; }
+.fb-turn + .fb-turn{ margin-top:4px; }
+.fb-speaker{ font-weight:700; color:var(--ink-soft); font-size:1.08rem; margin-right:4px; }
+.fb-dropzone{
+  display:inline-flex; align-items:center; justify-content:center; vertical-align:middle;
+  min-width:72px; min-height:36px; padding:2px 10px; margin:0 3px;
+  border-bottom:2.5px dashed var(--c-vocab-line); border-radius:8px 8px 0 0;
+  font-weight:700; color:var(--c-vocab); transition:background .18s, border-color .18s;
+}
+.fb-dropzone:empty:before{ content:"＿＿＿＿"; color:var(--ink-soft); opacity:0.45; font-weight:400; }
+.fb-dropzone.dragover{ background:var(--c-vocab-bg); border-color:var(--c-vocab); border-style:solid; }
+.fb-dropzone.filled{ border:none; background:var(--c-correct-bg); border-radius:10px; padding:3px 8px; }
+.fb-answer-toggle{ margin-top:18px; text-align:center; }
+.fb-answer-toggle button{ background:var(--c-vocab-bg); border:1.5px solid var(--c-vocab-line); color:var(--c-vocab); font-weight:700; border-radius:12px; padding:10px 24px; cursor:pointer; font-size:1.05rem; }
+.fb-answer-toggle button:hover{ background:var(--c-vocab-line); }
+
+/* ===== FIT MODE (áp dụng mặc định, không cần bật toàn màn hình) =====
+   Khối "fit-screen" (tiêu đề + audio + bài khoá + ảnh minh hoạ) gói gọn đúng 1 màn hình,
+   không cần cuộn để đọc hết hội thoại. Các phần bên dưới (từ vựng, tên riêng, hỏi-đáp,
+   ghi chú GV...) nằm ngoài khối này nên vẫn cuộn trang xuống xem như bình thường. */
+body.has-fit-slide .content-col{ overflow-y:auto; }
+body.has-fit-slide .main{ padding:18px 30px; }
+body.has-fit-slide .slide-card{ padding:18px 34px; box-shadow:none; }
+
+body.has-fit-slide .fit-screen{
+  height:calc(100vh - var(--topbar-h) - 72px);
+  min-height:440px;
+  display:flex; flex-direction:column; min-height:0;
+}
+body.has-fit-slide .fit-screen > .eyebrow{ flex:0 0 auto; margin:0 auto 8px; }
+body.has-fit-slide .fit-screen > h2{ flex:0 0 auto; font-size:1.8rem; margin:0 0 4px; }
+body.has-fit-slide .fit-screen > .subtitle{ flex:0 0 auto; font-size:1.08rem; margin:0 0 14px; }
+body.has-fit-slide .fit-screen .audio-player-custom{ flex:0 0 auto; margin-bottom:12px; }
+body.has-fit-slide .fit-screen .text-layout{ flex:1 1 auto; min-height:0; }
+body.has-fit-slide .fit-screen .text-layout-main{ height:100%; display:flex; flex-direction:column; min-height:0; }
+body.has-fit-slide .fit-screen .dialogue-box{
+  flex:1 1 auto; min-height:0; overflow-y:auto; margin-bottom:0; padding:22px 30px;
+  justify-content:space-evenly; gap:18px;
+}
+body.has-fit-slide .fit-screen .chat-avatar{ width:46px; height:46px; font-size:1.08rem; }
+body.has-fit-slide .fit-screen .chat-bubble{ padding:16px 22px; }
+body.has-fit-slide .fit-screen .chat-speaker{ font-size:1.05rem; }
+body.has-fit-slide .fit-screen .chat-text{ font-size:1.62rem; line-height:1.75; }
+body.has-fit-slide .fit-screen .text-illustration-col{ height:100%; position:relative; flex:0 0 452px; }
+body.has-fit-slide .fit-screen .text-illustration-ph,
+body.has-fit-slide .fit-screen .text-illustration{ height:100%; width:100%; aspect-ratio:unset; object-fit:contain; }
+@media (max-width:1100px){
+  body.has-fit-slide .fit-screen .text-illustration-col{ flex-basis:372px; }
+}
+@media (max-width:900px){
+  body.has-fit-slide .fit-screen{ height:auto; min-height:0; display:block; }
+  body.has-fit-slide .fit-screen .text-layout{ flex:none; }
+  body.has-fit-slide .fit-screen .text-layout-main{ height:auto; display:block; }
+  body.has-fit-slide .fit-screen .dialogue-box{ flex:none; overflow-y:visible; max-height:none; }
+  body.has-fit-slide .fit-screen .text-illustration-col{ height:auto; position:relative; flex:0 0 auto; }
+  body.has-fit-slide .fit-screen .text-illustration-ph,
+  body.has-fit-slide .fit-screen .text-illustration{ height:auto; aspect-ratio:3/5; }
+}
+
+/* ===== DIALOGUE (khung chat xen kẽ giữa 2 nhân vật) ===== */
+.dialogue-box{
+  background:linear-gradient(180deg, #FFFFFF 0%, var(--c-text-bg) 340%);
+  border:1.5px solid var(--c-text-line);
+  border-radius:18px; padding:26px 28px; margin-bottom:22px;
+  box-shadow:0 8px 20px var(--shadow); position:relative;
+  display:flex; flex-direction:column; gap:18px;
+}
+.chat-row{ display:flex; align-items:flex-end; gap:10px; width:100%; }
+.chat-row.spk-b{ flex-direction:row-reverse; }
+.chat-avatar{
+  flex:0 0 auto; width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:1.02rem; color:#fff; box-shadow:0 3px 8px var(--shadow);
+  position:relative; overflow:hidden;
+}
+.chat-avatar-fallback{ display:block; }
+.chat-avatar-img{ display:none; width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.chat-row.spk-a .chat-avatar{ background:var(--c-text); }
+.chat-row.spk-b .chat-avatar{ background:var(--c-phonetic); }
+.chat-bubble{
+  max-width:82%; border-radius:20px 20px 20px 6px; padding:14px 20px;
+  box-shadow:0 4px 10px var(--shadow);
+}
+.chat-row.spk-a .chat-bubble{ background:var(--c-text-bg); border:1.5px solid var(--c-text-line); }
+.chat-row.spk-b .chat-bubble{ background:var(--c-phonetic-bg); border:1.5px solid var(--c-phonetic-line); border-radius:20px 20px 6px 20px; margin-left:auto; }
+.chat-speaker{ display:block; font-weight:700; font-size:1.02rem; margin-bottom:4px; }
+.chat-row.spk-a .chat-speaker{ color:var(--c-text); }
+.chat-row.spk-b .chat-speaker{ color:var(--c-phonetic); }
+.chat-text{ font-size:1.5rem; line-height:1.7; color:var(--ink); }
+.para-box{
+  background:linear-gradient(180deg, #FFFFFF 0%, var(--c-text-bg) 340%);
+  border:1.5px solid var(--c-text-line); border-left:6px solid var(--c-text);
+  border-radius:18px; padding:30px 32px 26px; font-size:1.51rem; line-height:2.05;
+  margin-bottom:22px; box-shadow:0 8px 20px var(--shadow); position:relative;
+}
+.audio-tag{ display:inline-block; font-size:0.78rem; color:var(--ink-soft); background:var(--bg-app-2); border:1px solid var(--card-line); border-radius:999px; padding:2px 10px; margin-bottom:12px; }
+
+/* ===== CUSTOM AUDIO PLAYER (nut phat/dung + thanh tua) ===== */
+.audio-player-custom{
+  display:flex; align-items:center; gap:12px;
+  background:var(--c-text-bg); border:1.5px solid var(--c-text-line);
+  border-radius:999px; padding:7px 18px 7px 7px; margin-bottom:14px;
+  max-width:440px; box-shadow:0 4px 10px var(--shadow);
+}
+.audio-player-custom audio{ display:none; }
+.apc-btn{
+  flex:0 0 auto; width:38px; height:38px; border-radius:50%; border:none;
+  background:var(--c-text); color:#fff; cursor:pointer; font-size:0.95rem;
+  display:flex; align-items:center; justify-content:center; padding:0;
+  box-shadow:0 3px 8px var(--shadow);
+}
+.apc-btn:hover{ opacity:0.88; }
+.apc-icon-play{ margin-left:2px; }
+.apc-range{
+  flex:1 1 auto; -webkit-appearance:none; appearance:none; height:6px; border-radius:999px;
+  background:linear-gradient(to right, var(--c-text) 0%, var(--c-text-line) 0%);
+  cursor:pointer; outline:none;
+}
+.apc-range::-webkit-slider-runnable-track{ height:6px; border-radius:999px; background:transparent; }
+.apc-range::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:15px; height:15px; border-radius:50%;
+  background:var(--c-text); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.3); margin-top:-4.5px;
+}
+.apc-range::-moz-range-track{ height:6px; border-radius:999px; background:transparent; }
+.apc-range::-moz-range-thumb{
+  width:15px; height:15px; border-radius:50%; background:var(--c-text); border:2px solid #fff;
+  box-shadow:0 1px 4px rgba(0,0,0,0.3); cursor:pointer;
+}
+.apc-time{ flex:0 0 auto; font-size:0.78rem; color:var(--ink-soft); white-space:nowrap; font-variant-numeric:tabular-nums; }
+
+.vocab-link{
+  font-weight:700; color:var(--c-highlight); cursor:pointer; background:var(--c-highlight-bg);
+  padding:1px 7px; border-radius:7px; border-bottom:2px solid var(--c-highlight);
+  white-space:nowrap;
+}
+.vocab-link:hover{ background:var(--c-highlight-line); }
+
+/* ===== MODAL TU VUNG (bam vao vocab-link) ===== */
+.modal-body{ margin-top:4px; }
+.modal-top-row{
+  display:flex; gap:24px; align-items:flex-start; justify-content:center; flex-wrap:wrap;
+  padding-bottom:20px; margin-bottom:20px; border-bottom:1px solid var(--card-line);
+}
+.modal-top-row .modal-head-block{ flex:0 0 auto; min-width:0; max-width:100%; }
+.modal-head-block{ text-align:center; }
+.hw-toggle-btn{
+  display:inline-flex; align-items:center; gap:6px; margin-top:4px;
+  font-size:0.82rem; font-weight:700; padding:7px 14px; border-radius:999px;
+  border:1px solid var(--c-hanzi-line); background:var(--c-hanzi-bg); color:var(--c-hanzi);
+  cursor:pointer;
+}
+.hw-toggle-btn:hover{ background:var(--c-hanzi-line); }
+.usage-toggle-btn{ border-color:var(--c-warmup-line); background:var(--c-warmup-bg); color:var(--c-warmup); margin-top:0; }
+.usage-toggle-btn:hover{ background:var(--c-warmup-line); }
+.modal-usage-content{ display:none; margin-top:12px; }
+.modal-usage-content.show{ display:block; }
+.modal-example-title{ display:none; }
+.modal-example-title.show{ display:block; }
+.modal-word-head{ display:flex; align-items:baseline; justify-content:center; gap:16px; margin-bottom:6px; flex-wrap:nowrap; }
+.modal-word-head .mw-hanzi{ font-size:3rem; color:var(--c-hanzi); white-space:nowrap; }
+.modal-word-head .mw-pinyin{ font-size:1.3rem; font-style:italic; color:var(--ink-soft); white-space:nowrap; }
+.modal-pos{ display:inline-block; font-size:0.78rem; font-weight:700; color:var(--c-vocab); background:var(--c-vocab-bg); border-radius:999px; padding:2px 10px; margin-bottom:10px; }
+.grammar-star-badge{ display:inline-block; font-size:0.78rem; font-weight:700; color:var(--c-summary); background:var(--c-summary-bg); border:1px solid var(--c-summary-line); border-radius:999px; padding:2px 10px; margin-left:8px; }
+.bk-star{ font-size:0.85em; color:var(--c-summary); margin-left:2px; }
+.modal-meaning{ font-size:1.15rem; margin-bottom:18px; text-align:center; }
+.modal-example{ display:flex; flex-direction:column; gap:14px; }
+.modal-example-item{ display:flex; gap:10px; background:var(--c-text-bg); border:1px solid var(--c-text-line); border-radius:14px; padding:14px 18px; }
+.modal-example-item .ex-num{ flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:var(--c-text); color:#fff; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:3px; }
+.modal-example-item .zh{ font-size:1.48rem; line-height:1.7; display:block; }
+.modal-example-item .ex-vi{ font-size:0.92rem; color:var(--ink-soft); margin-top:4px; font-style:italic; }
+.modal-example .hl{ color:var(--c-hanzi); font-weight:700; border-bottom:2px solid var(--c-hanzi); }
+.modal-usage{ display:flex; flex-direction:column; gap:10px; }
+.modal-usage-item{ background:var(--c-warmup-bg); border:1px solid var(--c-warmup-line); border-radius:14px; padding:12px 16px; }
+.modal-usage-item .usage-pattern{ font-weight:700; color:var(--c-warmup); font-size:1.25rem; margin-bottom:5px; line-height:1.6; }
+.modal-usage-item .usage-note{ font-size:1.08rem; color:var(--ink); line-height:1.6; }
+.modal-usage-item .usage-note ul{ margin:0; padding-left:1.2em; }
+.modal-usage-item .usage-note li{ margin-bottom:4px; }
+.modal-usage-item .usage-note li:last-child{ margin-bottom:0; }
+.vocab-illustration-wrap{ margin-top:8px; }
+.vocab-illustration{
+  display:block; width:100%; max-width:320px; aspect-ratio:1/1; object-fit:cover;
+  border-radius:16px; border:1px solid var(--card-line); box-shadow:0 6px 16px var(--shadow);
+  margin:0 auto; background:var(--bg-app-2);
+}
+.hw-row{ display:none; flex-direction:row; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:18px; margin-top:14px; width:100%; }
+.hw-row.show{ display:flex; }
+.hw-block{ background:var(--bg-app-2); border:1px solid var(--card-line); border-radius:16px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:8px; width:220px; }
+.writer-canvas{ width:180px; height:180px; background:#fff; border-radius:12px; border:1px solid var(--card-line); }
+.hw-btns{ display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+.hw-btns button{ font-size:0.78rem; padding:6px 10px; border-radius:8px; border:1px solid var(--card-line); background:var(--card-bg); cursor:pointer; }
+.hw-btns button:hover{ background:var(--bg-app-2); }
+.hw-speed{ width:100%; }
+.quiz-feedback{ font-size:0.8rem; color:var(--ink-soft); text-align:center; min-height:1.2em; }
+
+/* ===== HOP CAU HOI HIEU BAI + THUAT LAI =====
+   position:absolute + inset:0 lấy khối chứa (.dialogue-box / .para-box, đều có
+   position:relative) làm gốc — nhờ đó lớp nền mờ chỉ phủ đúng phần văn bản/hội
+   thoại, KHÔNG lan sang cột ảnh minh hoạ bên cạnh (ảnh vẫn hiển thị rõ, không bị mờ),
+   giúp học sinh nhìn được cả ảnh lẫn gợi ý cùng lúc để trả lời. */
+.comprehension-box{
+  display:none; position:absolute; inset:0; z-index:20;
+  align-items:center; justify-content:center;
+  background:rgba(64,37,48,0.6);
+  padding:16px;
+}
+.comprehension-box.open{ display:flex; }
+.cb-card{
+  position:relative; width:100%; max-width:680px; max-height:100%;
+  overflow-y:auto; border-radius:16px; padding:24px 28px;
+  background:var(--card-bg); border:1.5px solid var(--c-text-line);
+  box-shadow:0 18px 44px var(--shadow-strong);
+}
+@media (max-width:900px){
+  .cb-card{ max-width:100%; padding:18px 18px; }
+}
+.cb-title{ font-weight:700; color:var(--c-text); font-size:1.18rem; padding-right:34px; margin-bottom:16px; }
+.cb-close-btn{
+  position:absolute; top:14px; right:14px; width:30px; height:30px; border-radius:50%;
+  border:1px solid var(--c-text-line); background:#fff; color:var(--c-text);
+  font-size:0.95rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.cb-close-btn:hover{ background:var(--c-text); color:#fff; }
+.cb-body{ display:block; }
+.qa-item{ background:var(--c-text-bg); border:1px solid var(--c-text-line); border-radius:10px; padding:10px 16px; margin-bottom:8px; }
+.qa-item:last-child{ margin-bottom:0; }
+.qa-item summary{ cursor:pointer; font-weight:600; color:var(--ink); list-style:none; }
+.qa-item summary .zh{ font-size:1.42rem; }
+.qa-item summary::-webkit-details-marker{ display:none; }
+.qa-item summary::before{ content:"▸ "; color:var(--c-text); font-weight:700; }
+.qa-item[open] summary::before{ content:"▾ "; }
+.qa-item .qa-answer{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--c-text-line); font-size:0.98rem; color:var(--ink-soft); line-height:1.7; }
+.qa-item .qa-answer .qa-tag{ font-weight:700; color:var(--c-text); }
+.cb-subtitle{ font-weight:700; color:var(--c-highlight); font-size:0.95rem; margin:16px 0 10px; padding-top:14px; border-top:1px dashed var(--c-text-line); }
+.retell-box{ padding:0; }
+.retell-hint{ font-weight:700; color:var(--c-highlight); font-size:0.85rem; margin-bottom:10px; }
+.retell-text{ font-size:1.15rem; line-height:1.85; color:var(--ink); }
+.summary-list{ margin:0; padding-left:22px; }
+.summary-list li{ font-size:1.08rem; line-height:1.9; color:var(--ink); margin-bottom:4px; }
+.cue-list{ display:flex; flex-direction:column; gap:12px; }
+.cue-card{ display:block; background:var(--c-highlight-bg); border:1.5px solid var(--c-highlight-line); border-radius:12px; padding:6px 16px; }
+.cue-card summary{ display:flex; align-items:center; gap:12px; cursor:pointer; list-style:none; padding:0; min-height:26px; }
+.cue-card summary::-webkit-details-marker{ display:none; }
+.cue-card summary::after{ content:"▸"; margin-left:auto; font-size:1rem; font-weight:700; color:var(--c-highlight); transition:transform .18s ease; }
+.cue-card[open] summary::after{ content:"▾"; }
+.cue-card[open] summary{ margin-bottom:4px; padding-bottom:4px; border-bottom:1px dashed rgba(0,0,0,0.12); }
+.cue-num{ flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--c-highlight); color:#fff; font-size:0.82rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+.cue-text{ font-size:1.28rem; color:var(--ink); line-height:1.4; }
+.cue-text .cue-dot{ font-weight:700; margin:0 4px; opacity:0.65; }
+#slide-2 .cue-list{ gap:20px; }
+#slide-2 .cue-card{ padding:14px 22px; }
+#slide-2 .cue-num{ width:32px; height:32px; font-size:1rem; }
+#slide-2 .cue-text{ font-size:1.6rem; }
+.cue-card:nth-child(1){ background:var(--bk1-bg); border-color:var(--bk1-line); }
+.cue-card:nth-child(1) .cue-num{ background:var(--bk1); }
+.cue-card:nth-child(1) .cue-dot{ color:var(--bk1); }
+.cue-card:nth-child(1) summary::after{ color:var(--bk1); }
+.cue-card:nth-child(2){ background:var(--bk2-bg); border-color:var(--bk2-line); }
+.cue-card:nth-child(2) .cue-num{ background:var(--bk2); }
+.cue-card:nth-child(2) .cue-dot{ color:var(--bk2); }
+.cue-card:nth-child(2) summary::after{ color:var(--bk2); }
+.cue-card:nth-child(3){ background:var(--bk3-bg); border-color:var(--bk3-line); }
+.cue-card:nth-child(3) .cue-num{ background:var(--bk3); }
+.cue-card:nth-child(3) .cue-dot{ color:var(--bk3); }
+.cue-card:nth-child(3) summary::after{ color:var(--bk3); }
+.cue-card:nth-child(4){ background:var(--bk4-bg); border-color:var(--bk4-line); }
+.cue-card:nth-child(4) .cue-num{ background:var(--bk4); }
+.cue-card:nth-child(4) .cue-dot{ color:var(--bk4); }
+.cue-card:nth-child(4) summary::after{ color:var(--bk4); }
+.cue-card:nth-child(5){ background:var(--bk5-bg); border-color:var(--bk5-line); }
+.cue-card:nth-child(5) .cue-num{ background:var(--bk5); }
+.cue-card:nth-child(5) .cue-dot{ color:var(--bk5); }
+.cue-card:nth-child(5) summary::after{ color:var(--bk5); }
+
+/* ===== MODAL: HUONG DAN CHEN ANH ===== */
+.modal-overlay{ display:none; position:fixed; inset:0; background:rgba(30,20,8,0.45); z-index:300; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.show{ display:flex; }
+.modal-box{ background:var(--card-bg); border-radius:22px; max-width:860px; width:100%; max-height:88vh; overflow-y:auto; padding:30px 32px; box-shadow:0 18px 44px var(--shadow-strong); position:relative; }
+.modal-close{ position:absolute; top:16px; right:18px; background:none; border:none; font-size:1.3rem; cursor:pointer; color:var(--ink-soft); }
+.modal-box h3{ margin:0 0 6px; }
+.modal-section-title{ font-weight:700; color:var(--ink-soft); font-size:0.82rem; letter-spacing:.03em; text-transform:uppercase; margin:18px 0 8px; }
+.img-guide-path{ font-size:0.85rem; color:var(--ink-soft); margin-bottom:12px; line-height:1.6; }
+.img-guide-path code{ background:var(--bg-app-2); padding:2px 8px; border-radius:6px; }
+.guide-table{ width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:10px; table-layout:fixed; }
+.guide-table th, .guide-table td{ border:1px solid var(--card-line); padding:8px 10px; text-align:left; vertical-align:top; font-size:0.85rem; }
+.guide-table th{ background:var(--bg-app-2); }
+.guide-table th:nth-child(1), .guide-table td:nth-child(1){ width:20%; }
+.guide-table th:nth-child(2), .guide-table td:nth-child(2){ width:16%; }
+.guide-table td.fname code{ background:var(--bg-app-2); padding:2px 6px; border-radius:6px; font-size:0.8rem; word-break:break-all; }
+@media (max-width:900px){
+  .modal-box{ padding:22px 18px; }
+  .guide-table{ table-layout:auto; }
+}
+@media (max-width:480px){
+  .modal-word-head .mw-hanzi{ font-size:2.2rem; }
+  .modal-word-head .mw-pinyin{ font-size:1.05rem; }
+  .fc-front .hanzi-big{ font-size:3.4rem; }
+}
+
+@media (max-width: 900px){
+  .content-col, body.sidebar-collapsed .content-col{ margin-left:0 !important; }
+  .sidebar{ width:var(--sidebar-w) !important; transform:translateX(-100%); transition:transform .28s ease; z-index:200; box-shadow:14px 0 34px rgba(0,0,0,0.22); }
+  body.sidebar-collapsed .sidebar{ transform:translateX(0); }
+  body.sidebar-collapsed .nav-group summary, body.sidebar-collapsed .nav-single > button{
+    justify-content:flex-start !important; text-align:left !important; padding:13px 18px !important;
+  }
+  body.sidebar-collapsed .nav-group summary .label, body.sidebar-collapsed .nav-group summary .chev,
+  body.sidebar-collapsed .nav-single > button .label, body.sidebar-collapsed .nav-item{ display:block !important; }
+  .sidebar-backdrop{ display:none; }
+  body.sidebar-collapsed .sidebar-backdrop{ display:block; position:fixed; inset:0; background:rgba(20,14,4,0.45); z-index:150; }
+  .main{ padding:18px 16px; }
+  .slide-card{ padding:26px 20px; min-height:auto; }
+  .back-to-top-btn{ width:23px; height:23px; font-size:0.55rem; left:20px; bottom:20px; }
+  .cover-slide h1.zh{ font-size:2.6rem; }
+  .cover-slide .cover-vi{ font-size:1.4rem; }
+}
+@media (max-width: 600px){
+  .match-images-grid{ grid-template-columns:repeat(2,1fr); }
+  .match-words-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width: 420px){
+  .match-images-grid{ grid-template-columns:repeat(1,1fr); max-width:260px; }
+  .match-words-grid{ grid-template-columns:repeat(1,1fr); max-width:260px; }
+}
+
+/* ===== VAN DUNG (PAIR / GROUP ACTIVITY) ===== */
+.pair-table{ width:100%; border-collapse:collapse; font-size:0.98rem; margin-top:16px; }
+.pair-table th{ background:var(--c-practice-bg); color:var(--c-practice); padding:12px 14px; border:1px solid var(--c-practice-line); text-align:left; font-size:1.1rem; }
+.pair-table td{ padding:14px 16px; border:1px solid var(--card-line); vertical-align:top; }
+.pair-table td.zh{ font-size:1.35rem; line-height:1.6; }
+.pair-table .pt-num{ text-align:center; font-weight:700; color:var(--c-practice); width:34px; font-size:1.1rem; }
+.pair-table .pt-note{ display:block; font-size:0.85rem; color:var(--ink-soft); margin-top:6px; }
+.pt-answer{
+  width:100%; min-height:44px; border:1.5px dashed var(--c-practice-line); border-radius:10px;
+  padding:9px 12px; font-size:1.1rem; color:var(--ink); background:transparent; outline:none;
+}
+.pt-answer:focus{ border-style:solid; background:var(--c-practice-bg); }
+.pt-answer:empty:before{ content:attr(data-placeholder); color:var(--ink-soft); opacity:0.65; }
+
+.structure-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px 28px; margin-top:18px; }
+.structure-chip{
+  display:flex; align-items:center; gap:10px; background:var(--c-practice-bg);
+  border:1.5px solid var(--c-practice-line); border-radius:12px; padding:14px 18px;
+  cursor:pointer; transition:background .15s, transform .12s;
+}
+.structure-chip:hover{ transform:translateY(-1px); box-shadow:0 4px 10px var(--shadow); }
+.structure-chip .sc-mark{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%; border:2px solid var(--c-practice);
+  color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700;
+}
+.structure-chip .sc-letter{ flex:0 0 auto; font-weight:700; color:var(--c-practice); font-size:1.15rem; }
+.structure-chip .sc-text{ font-size:1.3rem; }
+.structure-chip.used{ background:var(--c-practice); }
+.structure-chip.used .sc-mark{ background:#fff; color:var(--c-practice); }
+.structure-chip.used .sc-mark:before{ content:"✓"; }
+.structure-chip.used .sc-letter, .structure-chip.used .sc-text{ color:#fff; }
+@media (max-width:600px){
+  .structure-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body class="on-cover">
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="brand">HSK4 (2.0) · Bài 2</div>
+    <div class="sub"><span class="zh">真正的朋友</span></div>
+  </div>
+
+  <div class="nav-single">
+    <button class="active" data-slide="0" onclick="goTo(0)"><span class="emoji">🎬</span><span class="label zh">封面</span></button>
+  </div>
+
+  <details class="nav-group" open>
+    <summary><span class="emoji">🔥</span><span class="label zh">热身</span><span class="chev">❯</span></summary>
+    <button class="nav-item zh" data-slide="1" onclick="goTo(1)">1. 词语连线</button>
+    <button class="nav-item zh" data-slide="2" onclick="goTo(2)">2. 朋友调查表</button>
+  </details>
+
+  <div class="nav-single">
+    <button data-slide="3" onclick="goTo(3)"><span class="emoji">📖</span><span class="label zh">课文1 · 小夏和马克聊马克的中国朋友</span></button>
+  </div>
+
+  <div class="nav-single">
+    <button data-slide="4" onclick="goTo(4)"><span class="emoji">📖</span><span class="label zh">课文2 · 小李和小林聊同学聚会的事情</span></button>
+  </div>
+</div>
+
+
+<div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+<div class="content-col" id="contentCol">
+
+  <div class="main">
+    <div id="slidesContainer">
+
+      <!-- SLIDE 0: COVER -->
+      <div class="slide cover-slide active" id="slide-0">
+        <div class="slide-card">
+          <div class="cover-badge">HSK4 · Chủ đề: Tình bạn · Bài 2</div>
+          <h1 class="zh">真正的朋友</h1>
+          <div class="cover-vi">Người bạn chân chính</div>
+          <div class="cover-image-ph" id="coverImagePh">
+            <span class="ph-icon">🖼️</span>
+            <span class="ph-hint">Ảnh ngang minh hoạ bài học (khuyến nghị tỉ lệ 16:9)</span>
+          </div>
+          <img class="cover-image" id="coverImage" src="bia.png" alt="Ảnh minh hoạ chủ đề bài học"
+               style="display:none;"
+               onload="document.getElementById('coverImagePh').style.display='none'; this.style.display='block';"
+               onerror="this.style.display='none';">
+        </div>
+      </div>
+
+      <!-- SLIDE 1: KHOI DONG 1 - NOI TU VOI HINH -->
+      <div class="slide" id="slide-1">
+        <div class="slide-card">
+          <span class="eyebrow warmup">🔥 <span class="zh">热身</span> · Khởi động</span>
+          <h2><span class="zh">给下边的词语选择对应的图片</span></h2>
+
+          <div class="match-status">
+            <span class="progress-text" id="matchProgress">Đã ghép đúng: 0 / 6</span>
+            <div class="match-status-actions">
+              <button class="btn-reset btn-icon-only" id="pinyinToggleBtn" onclick="togglePinyin()" title="Hiện pinyin">👁️</button>
+              <button class="btn-reset btn-icon-only" onclick="resetMatchGame()" title="Làm lại">↺</button>
+            </div>
+          </div>
+
+          <div class="match-wrap">
+            <div class="match-images-grid">
+              <div class="match-img" data-pair="4" onclick="selectImg(this)">
+                <img class="match-img-photo" src="anh-a.png" alt="学习" onerror="this.remove();">
+                <span class="img-letter">A</span><span class="ph-icon">🖼️</span><span class="ph-hint">Cô gái ngồi học bài, đọc sách và ghi chép</span>
+              </div>
+              <div class="match-img" data-pair="5" onclick="selectImg(this)">
+                <img class="match-img-photo" src="anh-b.png" alt="聊天儿" onerror="this.remove();">
+                <span class="img-letter">B</span><span class="ph-icon">🖼️</span><span class="ph-hint">Cô gái ngồi ở quán cà phê ngoài trời, tay cầm ly nước</span>
+              </div>
+              <div class="match-img" data-pair="2" onclick="selectImg(this)">
+                <img class="match-img-photo" src="anh-c.png" alt="购物" onerror="this.remove();">
+                <span class="img-letter">C</span><span class="ph-icon">🖼️</span><span class="ph-hint">Cô gái xách nhiều túi mua sắm màu sắc, đeo kính mát</span>
+              </div>
+              <div class="match-img" data-pair="6" onclick="selectImg(this)">
+                <img class="match-img-photo" src="anh-d.png" alt="旅行" onerror="this.remove();">
+                <span class="img-letter">D</span><span class="ph-icon">🖼️</span><span class="ph-hint">Nhóm bạn chụp ảnh selfie trước tháp đồng hồ Big Ben, London</span>
+              </div>
+              <div class="match-img" data-pair="3" onclick="selectImg(this)">
+                <img class="match-img-photo" src="anh-e.png" alt="运动" onerror="this.remove();">
+                <span class="img-letter">E</span><span class="ph-icon">🖼️</span><span class="ph-hint">Nhóm bạn tập thể dục/yoga ngoài trời trên thảm tập</span>
+              </div>
+              <div class="match-img" data-pair="1" onclick="selectImg(this)">
+                <img class="match-img-photo" src="anh-f.png" alt="聚会" onerror="this.remove();">
+                <span class="img-letter">F</span><span class="ph-icon">🖼️</span><span class="ph-hint">Nhóm bạn nâng ly, trò chuyện vui vẻ ngoài trời</span>
+              </div>
+            </div>
+            <div class="match-words-grid hide-pinyin">
+              <button class="match-word" data-pair="1" onclick="selectWord(this)">
+                <span class="zh">聚会</span><span class="pinyin">jùhuì</span>
+              </button>
+              <button class="match-word" data-pair="2" onclick="selectWord(this)">
+                <span class="zh">购物</span><span class="pinyin">gòuwù</span>
+              </button>
+              <button class="match-word" data-pair="3" onclick="selectWord(this)">
+                <span class="zh">运动</span><span class="pinyin">yùndòng</span>
+              </button>
+              <button class="match-word" data-pair="4" onclick="selectWord(this)">
+                <span class="zh">学习</span><span class="pinyin">xuéxí</span>
+              </button>
+              <button class="match-word" data-pair="5" onclick="selectWord(this)">
+                <span class="zh">聊天儿</span><span class="pinyin">liáotiānr</span>
+              </button>
+              <button class="match-word" data-pair="6" onclick="selectWord(this)">
+                <span class="zh">旅行</span><span class="pinyin">lǚxíng</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: KHOI DONG 2 - KHAO SAT BAN BE -->
+      <div class="slide" id="slide-2">
+        <div class="slide-card">
+          <span class="eyebrow warmup">🔥 <span class="zh">热身</span> · Khởi động</span>
+          <h2><span class="zh">你跟朋友是怎么认识的？你们常常一起做什么？</span></h2>
+          <p class="subtitle">Bạn quen biết bạn mình như thế nào? Thường thì các bạn cùng làm những việc gì?</p>
+
+          <table class="pair-table" style="--c-practice:var(--c-warmup); --c-practice-bg:var(--c-warmup-bg); --c-practice-line:var(--c-warmup-line);">
+            <thead>
+              <tr>
+                <th class="zh">朋友的名字</th>
+                <th class="zh">第一次见面的时间</th>
+                <th class="zh">第一次见面的地方</th>
+                <th class="zh">常常一起做的事情</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+              </tr>
+              <tr>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+              </tr>
+              <tr>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+                <td><div class="pt-answer" contenteditable="true" data-placeholder="…"></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: 课文1 -->
+      <div class="slide" id="slide-3">
+        <div class="slide-card">
+          <div class="fit-screen">
+            <span class="eyebrow text">📖 <span class="zh">课文 1</span></span>
+            <h2 class="zh" style="font-size:1.6rem;">小夏和马克聊马克的中国朋友</h2>
+            <p class="subtitle">Tiểu Hạ và Mark nói chuyện về người bạn Trung Quốc của Mark</p>
+            <div class="text-layout">
+              <div class="text-layout-main">
+                <div class="audio-player-custom" id="aud1-wrap">
+                  <audio id="aud1" preload="metadata" src="02-1.mp3"
+                         onerror="handleAudioError('aud1')"
+                         onloadedmetadata="onAudioLoaded('aud1')"
+                         ontimeupdate="onAudioTimeUpdate('aud1')"
+                         onended="onAudioEnded('aud1')"></audio>
+                  <button type="button" class="apc-btn" id="aud1-btn" onclick="toggleAudio('aud1')" aria-label="Phát/Dừng audio"><span class="apc-icon-play">▶</span><span class="apc-icon-pause" style="display:none;">⏸</span></button>
+                  <input type="range" class="apc-range" id="aud1-range" value="0" min="0" max="0" step="0.01" oninput="onRangeInput('aud1')" aria-label="Tua audio 02-1">
+                  <span class="apc-time" id="aud1-time">00:00 / 00:00</span>
+                  <span class="audio-tag" id="aud1-tag" style="display:none;">🔊 Chưa có file âm thanh (02-1.mp3)</span>
+                </div>
+
+                <div class="dialogue-box">
+                  <div class="chat-row spk-a">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">夏</span><img class="chat-avatar-img" src="ava-xiaoxia.png" alt="小夏" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小夏</span><span class="chat-text zh">来中国快一年了，你<span class="zh vocab-link" onclick="openVocabModal(0)">适应</span>这儿的生活了吗？</span></div>
+                  </div>
+                  <div class="chat-row spk-b">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">克</span><img class="chat-avatar-img" src="ava-make.png" alt="马克" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">马克</span><span class="chat-text zh">开始有点儿不习惯，后来就慢慢适应了，最近我还<span class="zh vocab-link" onclick="openVocabModal(1)">交</span>了一个中国朋友。</span></div>
+                  </div>
+                  <div class="chat-row spk-a">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">夏</span><img class="chat-avatar-img" src="ava-xiaoxia.png" alt="小夏" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小夏</span><span class="chat-text zh">那就好，快给我讲讲你新交的中国朋友。</span></div>
+                  </div>
+                  <div class="chat-row spk-b">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">克</span><img class="chat-avatar-img" src="ava-make.png" alt="马克" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">马克</span><span class="chat-text zh">我们是在图书馆认识的。<span class="zh vocab-link" onclick="openVocabModal(2)">平时</span>我们常常一起看书、<span class="zh vocab-link" onclick="openVocabModal(3)">逛</span>街、踢足球。有时候他还给我发一些幽默<span class="zh vocab-link" onclick="openVocabModal(4)">短信</span>。</span></div>
+                  </div>
+                  <div class="chat-row spk-a">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">夏</span><img class="chat-avatar-img" src="ava-xiaoxia.png" alt="小夏" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小夏</span><span class="chat-text zh">你的这个朋友真不错！下次介绍我们认识认识，怎么样？</span></div>
+                  </div>
+                  <div class="chat-row spk-b">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">克</span><img class="chat-avatar-img" src="ava-make.png" alt="马克" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">马克</span><span class="chat-text zh">没问题！我们下午要去踢足球，<span class="zh vocab-link" onclick="openVocabModal(5)">正好</span>一起去吧。</span></div>
+                  </div>
+
+                  <div class="comprehension-box" id="cb1">
+                  <div class="cb-card">
+                  <button class="cb-close-btn" onclick="toggleCompBoxById('cb1')">✕</button>
+                  <div class="cb-title">🗨️ <span class="zh">根据课文内容回答问题</span></div>
+                  <div class="cb-body">
+                  <details class="qa-item">
+                    <summary>① <span class="zh">马克是怎么认识这个中国朋友的？他们平时常常做什么？</span></summary>
+                    <div class="qa-answer"><span class="qa-tag">Gợi ý：</span><span class="zh">他们是在图书馆认识的。平时他们常常一起看书、逛街、踢足球，有时候这个朋友还给马克发一些幽默短信。</span></div>
+                  </details>
+                  <details class="qa-item">
+                    <summary>② <span class="zh">小夏对马克的这个朋友有什么反应？她想做什么？</span></summary>
+                    <div class="qa-answer"><span class="qa-tag">Gợi ý：</span><span class="zh">小夏觉得马克的这个朋友真不错，她想让马克介绍他们认识认识。马克下午要去踢足球，说正好一起去。</span></div>
+                  </details>
+                  <div class="cb-subtitle">🗣️ <span class="zh">复述</span></div>
+                  <div class="retell-box">
+                    <div class="retell-hint"><span class="zh">课文1：马克的语气</span></div>
+                    <div class="retell-text zh">我来中国快一年了。……</div>
+                    <div class="cue-list zh">
+                      <details class="cue-card"><summary><span class="cue-num">1</span></summary><div class="cue-text">来中国快一年了<span class="cue-dot">·</span>慢慢适应了</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">2</span></summary><div class="cue-text">交了一个中国朋友<span class="cue-dot">·</span>图书馆认识的</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">3</span></summary><div class="cue-text">平时一起看书<span class="cue-dot">·</span>逛街<span class="cue-dot">·</span>踢足球</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">4</span></summary><div class="cue-text">他常发幽默短信</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">5</span></summary><div class="cue-text">小夏想认识<span class="cue-dot">·</span>下午正好一起踢足球</div></details>
+                    </div>
+                  </div>
+                  </div>
+                  </div>
+          </div>
+                </div>
+
+              </div>
+
+              <div class="text-illustration-col">
+                <button class="cb-jump-btn" onclick="toggleCompBoxById('cb1')" title="Xem câu hỏi ôn bài">❓</button>
+                <div class="text-illustration-ph" id="cvImg1Ph">
+                  <span class="ph-icon">🖼️</span>
+                  <span class="ph-hint">Ảnh dọc minh hoạ <span class="zh">课文</span>1, cỡ lớn (tỉ lệ ~3:5), dạng 4 khung truyện tranh bám sát diễn biến hội thoại — xem gợi ý từ khoá chi tiết trong mục "🖼️ Ảnh cần chuẩn bị"</span>
+                </div>
+                <img class="text-illustration" id="cvImg1" src="02-1-img.png" alt="Ảnh minh hoạ 课文1" style="display:none;"
+                     onload="document.getElementById('cvImg1Ph').style.display='none'; this.style.display='block';"
+                     onerror="this.style.display='none';">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: 课文2 -->
+      <div class="slide" id="slide-4">
+        <div class="slide-card">
+          <div class="fit-screen">
+            <span class="eyebrow text">📖 <span class="zh">课文 2</span></span>
+            <h2 class="zh" style="font-size:1.6rem;">小李和小林聊同学聚会的事情</h2>
+            <p class="subtitle">Tiểu Lý và Tiểu Lâm nói chuyện về buổi họp mặt bạn học</p>
+            <div class="text-layout">
+              <div class="text-layout-main">
+                <div class="audio-player-custom" id="aud2-wrap">
+                  <audio id="aud2" preload="metadata" src="02-2.mp3"
+                         onerror="handleAudioError('aud2')"
+                         onloadedmetadata="onAudioLoaded('aud2')"
+                         ontimeupdate="onAudioTimeUpdate('aud2')"
+                         onended="onAudioEnded('aud2')"></audio>
+                  <button type="button" class="apc-btn" id="aud2-btn" onclick="toggleAudio('aud2')" aria-label="Phát/Dừng audio"><span class="apc-icon-play">▶</span><span class="apc-icon-pause" style="display:none;">⏸</span></button>
+                  <input type="range" class="apc-range" id="aud2-range" value="0" min="0" max="0" step="0.01" oninput="onRangeInput('aud2')" aria-label="Tua audio 02-2">
+                  <span class="apc-time" id="aud2-time">00:00 / 00:00</span>
+                  <span class="audio-tag" id="aud2-tag" style="display:none;">🔊 Chưa có file âm thanh (02-2.mp3)</span>
+                </div>
+
+                <div class="dialogue-box">
+                  <div class="chat-row spk-a">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">李</span><img class="chat-avatar-img" src="ava-xiaoli.png" alt="小李" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小李</span><span class="chat-text zh">星期天同学<span class="zh vocab-link" onclick="openVocabModal(6)">聚会</span>，你能来吗？</span></div>
+                  </div>
+                  <div class="chat-row spk-b">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">林</span><img class="chat-avatar-img" src="ava-xiaolin.png" alt="小林" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小林</span><span class="chat-text zh">能来。班里同学你<span class="zh vocab-link" onclick="openVocabModal(7)">联系</span>得怎么样了？来多少人？</span></div>
+                  </div>
+                  <div class="chat-row spk-a">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">李</span><img class="chat-avatar-img" src="ava-xiaoli.png" alt="小李" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小李</span><span class="chat-text zh"><span class="zh vocab-link" onclick="openVocabModal(8)">差不多</span>一半儿吧，张远还<span class="zh vocab-link" onclick="openVocabModal(9)">专门</span>从国外飞回来呢。</span></div>
+                  </div>
+                  <div class="chat-row spk-b">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">林</span><img class="chat-avatar-img" src="ava-xiaolin.png" alt="小林" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小林</span><span class="chat-text zh">是吗？<span class="zh vocab-link" onclick="openVocabModal(10)">毕业</span>都快十年了，真想大家啊！对了，今天早上，我在地铁站遇到了王静，她毕业后就去上海工作了，她这次是来旅游的。</span></div>
+                  </div>
+                  <div class="chat-row spk-a">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">李</span><img class="chat-avatar-img" src="ava-xiaoli.png" alt="小李" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小李</span><span class="chat-text zh">那太好了！<span class="zh vocab-link" onclick="openVocabModal(11)">麻烦</span>你跟她联系一下，请她一起来参加同学聚会。聚会就在学校门口那个饭店，六点半。别迟到啊！</span></div>
+                  </div>
+                  <div class="chat-row spk-b">
+                    <span class="chat-avatar"><span class="chat-avatar-fallback zh">林</span><img class="chat-avatar-img" src="ava-xiaolin.png" alt="小林" onload="this.previousElementSibling.style.display='none'; this.style.display='block';" onerror="this.style.display='none';"></span>
+                    <div class="chat-bubble"><span class="chat-speaker zh">小林</span><span class="chat-text zh">放心吧。星期天六点半见！</span></div>
+                  </div>
+
+                  <div class="comprehension-box" id="cb2">
+                  <div class="cb-card">
+                  <button class="cb-close-btn" onclick="toggleCompBoxById('cb2')">✕</button>
+                  <div class="cb-title">🗨️ <span class="zh">根据课文内容回答问题</span></div>
+                  <div class="cb-body">
+                  <details class="qa-item">
+                    <summary>① <span class="zh">同学聚会是什么时候？在哪儿？几点？</span></summary>
+                    <div class="qa-answer"><span class="qa-tag">Gợi ý：</span><span class="zh">聚会是星期天，在学校门口那个饭店，六点半。</span></div>
+                  </details>
+                  <details class="qa-item">
+                    <summary>② <span class="zh">小林今天早上在哪儿遇到了谁？她现在做什么？</span></summary>
+                    <div class="qa-answer"><span class="qa-tag">Gợi ý：</span><span class="zh">小林今天早上在地铁站遇到了王静，她毕业后去上海工作了，这次是来旅游的。</span></div>
+                  </details>
+                  <details class="qa-item">
+                    <summary>③ <span class="zh">小李请小林帮忙做什么？</span></summary>
+                    <div class="qa-answer"><span class="qa-tag">Gợi ý：</span><span class="zh">小李请小林跟王静联系一下，请她也一起来参加同学聚会。</span></div>
+                  </details>
+                  <div class="cb-subtitle">🗣️ <span class="zh">复述</span></div>
+                  <div class="retell-box">
+                    <div class="retell-hint"><span class="zh">课文2：小李的语气</span></div>
+                    <div class="retell-text zh">星期天我们班同学聚会。……</div>
+                    <div class="cue-list zh">
+                      <details class="cue-card"><summary><span class="cue-num">1</span></summary><div class="cue-text">星期天同学聚会<span class="cue-dot">·</span>问小林能不能来</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">2</span></summary><div class="cue-text">差不多一半儿人<span class="cue-dot">·</span>张远专门飞回来</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">3</span></summary><div class="cue-text">小林毕业快十年了<span class="cue-dot">·</span>地铁站遇到王静</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">4</span></summary><div class="cue-text">王静去上海工作了<span class="cue-dot">·</span>这次回来旅游</div></details>
+                      <details class="cue-card"><summary><span class="cue-num">5</span></summary><div class="cue-text">麻烦小林联系王静<span class="cue-dot">·</span>六点半饭店见</div></details>
+                    </div>
+                  </div>
+                  </div>
+                  </div>
+          </div>
+                </div>
+
+              </div>
+
+              <div class="text-illustration-col">
+                <button class="cb-jump-btn" onclick="toggleCompBoxById('cb2')" title="Xem câu hỏi ôn bài">❓</button>
+                <div class="text-illustration-ph" id="cvImg2Ph">
+                  <span class="ph-icon">🖼️</span>
+                  <span class="ph-hint">Ảnh dọc minh hoạ <span class="zh">课文</span>2, cỡ lớn (tỉ lệ ~3:5), dạng 4 khung truyện tranh bám sát diễn biến hội thoại — xem gợi ý từ khoá chi tiết trong mục "🖼️ Ảnh cần chuẩn bị"</span>
+                </div>
+                <img class="text-illustration" id="cvImg2" src="02-2-img.png" alt="Ảnh minh hoạ 课文2" style="display:none;"
+                     onload="document.getElementById('cvImg2Ph').style.display='none'; this.style.display='block';"
+                     onerror="this.style.display='none';">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+  <div class="site-footer">
+    <span>HSK4 (2.0)_Bài 2_hathai_0387657439</span>
+  </div>
+</div>
+
+<button class="back-to-top-btn" id="backToTopBtn" onclick="scrollToTop()" title="Về đầu trang">↑</button>
+<button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Xem toàn màn hình"><span id="fullscreenIcon">⛶</span></button>
+<button class="image-guide-btn" id="imageGuideBtn" onclick="openImageGuide()" title="Danh sách ảnh minh hoạ cần chèn">🖼️</button>
+
+<!-- MODAL: TU VUNG -->
+<div class="modal-overlay" id="vocabModal">
+  <div class="modal-box" style="max-width:960px;">
+    <button class="modal-close" onclick="closeVocabModal()">✕</button>
+    <div class="modal-body">
+      <div class="modal-top-row" id="mTopRow">
+        <div class="modal-head-block">
+          <div class="modal-word-head">
+            <span class="mw-hanzi zh" id="mHanzi">挺</span>
+            <span class="mw-pinyin" id="mPinyin">tǐng</span>
+            <span class="grammar-star-badge" id="mStarBadge" style="display:none;" title="Điểm ngữ pháp chính — xem file Ngữ pháp riêng">★ Ngữ pháp</span>
+          </div>
+          <span class="modal-pos" id="mPos">phó.</span>
+          <div class="modal-meaning" id="mMeaning">rất</div>
+          <button class="hw-toggle-btn" id="mHwToggleBtn" onclick="toggleHwRow()">✍️ Xem bút thuận</button>
+        </div>
+
+        <div class="hw-row" id="mHwRow"></div>
+      </div>
+
+      <div class="vocab-illustration-wrap" id="mIllustrationWrap">
+        <img class="vocab-illustration" id="mIllustration" src="" alt=""
+             onerror="document.getElementById('mIllustrationWrap').style.display='none';">
+      </div>
+
+      <div class="modal-usage-wrap" id="mUsageWrap" style="display:none;">
+        <button class="hw-toggle-btn usage-toggle-btn" id="mUsageToggleBtn" onclick="toggleUsageBlock()">⚠️ Xem cách dùng cần lưu ý</button>
+        <div class="modal-usage-content" id="mUsageContent">
+          <div class="modal-section-title">⚠️ Cách dùng cần lưu ý</div>
+          <div class="modal-usage" id="mUsage"></div>
+        </div>
+      </div>
+
+      <div class="modal-section-title modal-example-title" id="mExampleTitle">Ví dụ (ngoài bài khoá)</div>
+      <div class="modal-example" id="mExample"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: IMAGE GUIDE -->
+
+<!-- MODAL: IMAGE GUIDE -->
+<div class="modal-overlay" id="imageGuideModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeImageGuide()">✕</button>
+    <h3>🖼️ Ảnh &amp; audio cần chuẩn bị cho bài này</h3>
+
+    <div class="img-guide-path">
+      Đặt tất cả file (ảnh &amp; audio) <b>cùng thư mục với file HTML này</b> (không cần thư mục con), đặt tên file <b>đúng chính xác</b> như cột "Tên file" bên dưới. Với ảnh: copy nguyên văn cột "Gợi ý từ khoá tạo ảnh" (dán vào ChatGPT/Gemini/Midjourney...) để tạo, rồi đặt đúng tên file trước khi tải lên cùng file HTML.
+    </div>
+
+    <div class="modal-section-title" style="margin-top:4px;">🎬 Ảnh bìa (tỉ lệ ngang 16:9)</div>
+    <table class="guide-table">
+      <thead><tr><th>Vị trí</th><th>Tên file</th><th>Gợi ý từ khoá tạo ảnh</th></tr></thead>
+      <tbody>
+        <tr><td>Trang bìa</td><td class="fname"><code>bia.png</code></td>
+          <td>Ảnh minh hoạ ngang tỉ lệ 16:9, chủ đề tình bạn chân thành, phong cách flat illustration hiện đại, tông màu đỏ đất – hồng pastel ấm áp, hai hoặc ba người trẻ châu Á đang khoác vai nhau hoặc nắm tay nhau, cười vui vẻ, có thể thêm hình trái tim nhỏ cách điệu hoặc vài ngôi sao lấp lánh phía trên ngụ ý sự gắn kết chân thành, không khí ấm áp tích cực, không có chữ trong ảnh.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="modal-section-title">🔥 Khởi động — Nối từ với hình (6 ảnh ngang tỉ lệ 4:3)</div>
+    <table class="guide-table">
+      <thead><tr><th>Từ minh hoạ</th><th>Tên file</th><th>Gợi ý từ khoá tạo ảnh</th></tr></thead>
+      <tbody>
+        <tr><td><span class="zh">学习</span> <i>xuéxí</i> (học tập)</td><td class="fname"><code>anh-a.png</code></td>
+          <td>Ảnh ngang tỉ lệ 4:3, phong cách flat illustration dễ thương, tông màu pastel ấm, một cô gái châu Á trẻ ngồi bên bàn học, đang đọc sách và ghi chép, xung quanh có vài quyển vở, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">聊天儿</span> <i>liáotiānr</i> (trò chuyện, tán gẫu)</td><td class="fname"><code>anh-b.png</code></td>
+          <td>Ảnh ngang tỉ lệ 4:3, phong cách flat illustration dễ thương, tông màu pastel ấm, hai cô gái châu Á trẻ ngồi ở bàn quán cà phê ngoài trời, tay cầm ly nước, đang trò chuyện vui vẻ, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">购物</span> <i>gòuwù</i> (mua sắm)</td><td class="fname"><code>anh-c.png</code></td>
+          <td>Ảnh ngang tỉ lệ 4:3, phong cách flat illustration dễ thương, tông màu pastel ấm, một cô gái châu Á trẻ đeo kính mát, tay xách nhiều túi mua sắm nhiều màu sắc, đang bước đi vui vẻ, nền màu đơn sắc pastel, không có chữ và không có logo thương hiệu trong ảnh.</td></tr>
+        <tr><td><span class="zh">旅行</span> <i>lǚxíng</i> (du lịch)</td><td class="fname"><code>anh-d.png</code></td>
+          <td>Ảnh ngang tỉ lệ 4:3, phong cách flat illustration dễ thương, tông màu pastel ấm, một nhóm bạn trẻ châu Á đứng chụp ảnh selfie vui vẻ trước một tháp đồng hồ nổi tiếng kiểu châu Âu, nền trời xanh, nền màu tổng thể pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">运动</span> <i>yùndòng</i> (vận động, thể thao)</td><td class="fname"><code>anh-e.png</code></td>
+          <td>Ảnh ngang tỉ lệ 4:3, phong cách flat illustration dễ thương, tông màu pastel ấm, một nhóm bạn trẻ châu Á mặc đồ thể thao đang tập yoga/thể dục ngoài trời trên thảm tập, không gian có cây xanh, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">聚会</span> <i>jùhuì</i> (họp mặt, tụ tập)</td><td class="fname"><code>anh-f.png</code></td>
+          <td>Ảnh ngang tỉ lệ 4:3, phong cách flat illustration dễ thương, tông màu pastel ấm, một nhóm bạn trẻ châu Á ngồi quanh bàn ngoài trời, đang nâng ly nước/đồ uống chúc mừng vui vẻ, nền màu đơn sắc pastel, không có chữ và không có nhãn hiệu đồ uống trong ảnh.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="modal-section-title">🔊 Audio bài khoá (định dạng .mp3)</div>
+    <table class="guide-table">
+      <thead><tr><th style="width:30%;">Bài khoá</th><th style="width:20%;">Tên file</th><th>Ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td><span class="zh">课文</span>1 — 小夏和马克聊马克的中国朋友</td><td class="fname"><code>02-1.mp3</code></td><td>Trùng số track đĩa audio gốc HSK (nếu có sẵn từ bộ sách, chỉ cần đổi tên).</td></tr>
+        <tr><td><span class="zh">课文</span>2 — 小李和小林聊同学聚会的事情</td><td class="fname"><code>02-2.mp3</code></td><td>Trùng số track đĩa audio gốc HSK (nếu có sẵn từ bộ sách, chỉ cần đổi tên).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="modal-section-title">🧑 Ảnh đại diện nhân vật hội thoại (avatar tròn, .png)</div>
+    <table class="guide-table">
+      <thead><tr><th style="width:20%;">Nhân vật</th><th style="width:20%;">Tên file</th><th>Gợi ý từ khoá tạo ảnh</th></tr></thead>
+      <tbody>
+        <tr><td><span class="zh">小夏</span> (Tiểu Hạ)</td><td class="fname"><code>ava-xiaoxia.png</code></td>
+          <td>Ảnh avatar tròn, phong cách flat illustration dễ thương, một nam sinh viên châu Á trẻ tuổi, tóc ngắn hơi rối, đeo kính gọng mỏng, mặc áo sơ mi xanh dương nhạt, biểu cảm thân thiện, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">马克</span> (Mark)</td><td class="fname"><code>ava-make.png</code></td>
+          <td>Ảnh avatar tròn, phong cách flat illustration dễ thương, một nam sinh viên trẻ tuổi người phương Tây (da trắng, tóc nâu/vàng gọn gàng), ăn mặc giản dị kiểu sinh viên (áo phông hoặc áo sơ mi casual), biểu cảm cởi mở hoà đồng, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">小李</span> (Tiểu Lý)</td><td class="fname"><code>ava-xiaoli.png</code></td>
+          <td>Ảnh avatar tròn, phong cách flat illustration dễ thương, một nam thanh niên châu Á, tóc hơi dài phủ mai, mặc áo polo xanh lá, biểu cảm nhiệt tình, vui vẻ, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">小林</span> (Tiểu Lâm)</td><td class="fname"><code>ava-xiaolin.png</code></td>
+          <td>Ảnh avatar tròn, phong cách flat illustration dễ thương, một nam thanh niên châu Á trẻ tuổi, tóc ngắn gọn gàng rẽ ngôi, mặc áo sơ mi trắng không cà vạt (tay áo xắn nhẹ), biểu cảm nhanh nhẹn, thân thiện, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="modal-section-title">📖 Ảnh minh hoạ bài khoá (ảnh dọc ~3:5, dạng truyện tranh 3-4 khung, .png)</div>
+    <table class="guide-table">
+      <thead><tr><th style="width:20%;">Bài khoá</th><th style="width:20%;">Tên file</th><th>Gợi ý từ khoá tạo ảnh</th></tr></thead>
+      <tbody>
+        <tr><td><span class="zh">课文</span>1</td><td class="fname"><code>02-1-img.png</code></td>
+          <td>Ảnh dọc tỉ lệ ~3:5, dạng truyện tranh 3-4 khung, phong cách flat illustration dễ thương, tông màu pastel ấm. Khung 1: 小夏 và 马克 (theo đúng mô tả ngoại hình ở avatar) đang trò chuyện, 小夏 hỏi thăm 马克 về cuộc sống ở Trung Quốc. Khung 2: 马克 kể về người bạn Trung Quốc mới quen, có thể vẽ thêm khung cảnh thư viện nhỏ phía sau gợi ý nơi họ gặp nhau. Khung 3: hai người cùng đi dạo phố và đá bóng vui vẻ (gợi ý hoạt động 逛街、踢足球). Khung 4: 马克 rủ 小夏 cùng đi đá bóng buổi chiều, cả hai cười vui vẻ. Không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">课文</span>2</td><td class="fname"><code>02-2-img.png</code></td>
+          <td>Ảnh dọc tỉ lệ ~3:5, dạng truyện tranh 4 khung, phong cách flat illustration dễ thương, tông màu pastel ấm. Khung 1: 小李 (nam, tóc hơi dài phủ mai, áo polo xanh lá) đang gọi điện hoặc ngồi trò chuyện với 小林 (nam, tóc ngắn rẽ ngôi, áo sơ mi trắng), bàn về việc tổ chức buổi họp mặt bạn học. Khung 2: hình ảnh cách điệu một chiếc máy bay nhỏ bay qua bầu trời, ngụ ý người bạn 张远 đặc biệt bay từ nước ngoài về. Khung 3: 小林 tình cờ gặp 王静 (nữ, tóc buộc cao gọn gàng, áo sơ mi hồng phấn, đang kéo một chiếc vali du lịch nhỏ) ở ga tàu điện ngầm vào buổi sáng, cả hai vui mừng chào nhau. Khung 4: 小李 và 小林 cùng cười vui, chốt hẹn gặp nhau tại một nhà hàng nhỏ trước cổng trường. Không có chữ trong ảnh.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="modal-section-title">📚 Ảnh minh hoạ từ vựng (vuông 1:1, dùng trong modal bấm từ)</div>
+    <table class="guide-table">
+      <thead><tr><th style="width:22%;">Từ</th><th style="width:18%;">Tên file</th><th>Gợi ý từ khoá tạo ảnh</th></tr></thead>
+      <tbody>
+        <tr><td><span class="zh">适应</span> <i>shìyìng</i> (thích nghi)</td><td class="fname"><code>shiying.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một mảnh ghép puzzle nhỏ đang khớp vừa vặn vào đúng chỗ trống của nó, ngụ ý sự thích nghi/hoà nhập, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">交</span> <i>jiāo</i> (kết giao)</td><td class="fname"><code>jiao.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, hai bàn tay châu Á đang bắt tay nhau thân thiện, có vài trái tim nhỏ cách điệu xung quanh ngụ ý kết bạn, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">平时</span> <i>píngshí</i> (lúc thường)</td><td class="fname"><code>pingshi.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một chiếc lịch cách điệu với nhiều ngày bình thường được đánh dấu tích nhỏ giống nhau, ngụ ý những ngày thường lặp lại, nền màu đơn sắc pastel, không có chữ và không có số ngày cụ thể trong ảnh.</td></tr>
+        <tr><td><span class="zh">逛</span> <i>guàng</i> (đi dạo)</td><td class="fname"><code>guang.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một đôi bạn trẻ châu Á đang tản bộ thong thả trên phố có vài cửa hàng nhỏ hai bên, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">短信</span> <i>duǎnxìn</i> (tin nhắn)</td><td class="fname"><code>duanxin.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một chiếc điện thoại di động cách điệu với biểu tượng bong bóng tin nhắn nhỏ nổi lên phía trên màn hình, nền màu đơn sắc pastel, không có chữ cụ thể trong bong bóng tin nhắn.</td></tr>
+        <tr><td><span class="zh">正好</span> <i>zhènghǎo</i> (đúng lúc)</td><td class="fname"><code>zhenghao.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một chiếc đồng hồ cách điệu với kim đồng hồ chỉ đúng vào một dấu tích ✓ nổi bật trên mặt đồng hồ, ngụ ý thời điểm vừa vặn đúng lúc, nền màu đơn sắc pastel, không có chữ và không có số cụ thể trên đồng hồ.</td></tr>
+        <tr><td><span class="zh">聚会</span> <i>jùhuì</i> (họp mặt)</td><td class="fname"><code>juhui.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một nhóm bạn trẻ châu Á ngồi quây quần quanh bàn, cười nói vui vẻ, có vài quả bóng bay nhỏ trang trí, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">联系</span> <i>liánxì</i> (liên hệ)</td><td class="fname"><code>lianxi.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, hai chiếc điện thoại di động cách điệu nối với nhau bằng một đường sóng tín hiệu lượn sóng, ngụ ý việc liên lạc, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">差不多</span> <i>chàbuduō</i> (gần như)</td><td class="fname"><code>chabuduo.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một chiếc cân thăng bằng cách điệu với hai đĩa cân gần như ngang bằng nhau, ngụ ý sự xấp xỉ/gần bằng nhau, nền màu đơn sắc pastel, không có chữ và không có số trong ảnh.</td></tr>
+        <tr><td><span class="zh">专门</span> <i>zhuānmén</i> (đặc biệt, riêng)</td><td class="fname"><code>zhuanmen.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một chiếc hộp quà nhỏ được gói ruy băng cẩn thận, đặt riêng biệt nổi bật giữa khung hình, ngụ ý sự dành riêng/đặc biệt, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">毕业</span> <i>bìyè</i> (tốt nghiệp)</td><td class="fname"><code>biye.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một sinh viên châu Á đội mũ tốt nghiệp đang tung mũ lên vui mừng, tay còn lại cầm cuộn bằng, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+        <tr><td><span class="zh">麻烦</span> <i>máfan</i> (làm phiền)</td><td class="fname"><code>mafan.png</code></td>
+          <td>Ảnh vuông tỉ lệ 1:1, phong cách flat illustration dễ thương, tông màu pastel ấm, một người châu Á đang chắp hai tay nhẹ nhàng ra hiệu xin lỗi/nhờ vả với biểu cảm ngại ngùng lịch sự, nền màu đơn sắc pastel, không có chữ trong ảnh.</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+<script>
+/* ============ SIDEBAR / NAVIGATION ============ */
+function toggleSidebar(){ document.body.classList.toggle('sidebar-collapsed'); }
+
+var totalSlides = 5;
+var current = 0;
+function showSlide(n){
+  if(n<0) n=0; if(n>totalSlides-1) n=totalSlides-1;
+  document.getElementById('slide-'+current).classList.remove('active');
+  var navCurrent = document.querySelector('.nav-item.active, .nav-single > button.active');
+  if(navCurrent) navCurrent.classList.remove('active');
+  current = n;
+  var slideEl = document.getElementById('slide-'+current);
+  slideEl.classList.add('active');
+  document.body.classList.toggle('has-fit-slide', slideEl.classList.contains('text-fit'));
+  document.body.classList.toggle('on-cover', current === 0);
+  var navNext = document.querySelector('[data-slide="'+current+'"]');
+  if(navNext) navNext.classList.add('active');
+  window.scrollTo(0,0);
+}
+function goTo(n){
+  if(n === current){
+    toggleSidebar();
+    return;
+  }
+  showSlide(n);
+}
+
+/* ===== SIDEBAR ACCORDION: chỉ 1 nhóm mở tại 1 thời điểm ===== */
+document.querySelectorAll('.nav-group').forEach(function(group){
+  group.addEventListener('toggle', function(){
+    if(group.open){
+      document.querySelectorAll('.nav-group').forEach(function(other){
+        if(other !== group) other.open = false;
+      });
+    }
+  });
+});
+/* Bấm lại vào tiêu đề nhóm đang mở sẵn -> thu/mở toàn bộ sidebar (thay vì chỉ đóng nhóm đó) */
+document.querySelectorAll('.nav-group > summary').forEach(function(summary){
+  summary.addEventListener('click', function(e){
+    var details = summary.parentElement;
+    if(details.open){
+      e.preventDefault();
+      toggleSidebar();
+    }
+  });
+});
+document.addEventListener('keydown', function(e){
+  if(e.key==='ArrowRight'){ showSlide(current+1); } else if(e.key==='ArrowLeft'){ showSlide(current-1); }
+  else if(e.key==='Escape'){ closeVocabModal(); closeImageGuide(); }
+});
+
+/* ============ IMAGE GUIDE MODAL ============ */
+function openImageGuide(){ document.getElementById('imageGuideModal').classList.add('show'); }
+function closeImageGuide(){ document.getElementById('imageGuideModal').classList.remove('show'); }
+document.getElementById('imageGuideModal').addEventListener('click', function(e){ if(e.target===this) closeImageGuide(); });
+
+/* ============ COMPREHENSION BOX (cau hoi hieu bai) ============ */
+function toggleCompBox(btn){
+  var box = btn.closest('.comprehension-box');
+  box.classList.toggle('open');
+}
+function openCompBoxById(id){
+  var box = document.getElementById(id);
+  if(!box) return;
+  box.classList.add('open');
+  box.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function closeCompBoxById(id){
+  var box = document.getElementById(id);
+  if(!box) return;
+  box.classList.remove('open');
+}
+function toggleCompBoxById(id){
+  var box = document.getElementById(id);
+  if(!box) return;
+  if(box.classList.contains('open')){ closeCompBoxById(id); } else { openCompBoxById(id); }
+}
+
+/* ============ VOCAB DATA — Bài 2 真正的朋友 ============
+   Chờ nội dung 课文 + danh sách từ vựng của giáo viên gửi tiếp theo.
+   vocabData / vocabByLesson / slideToLessonNum sẽ được điền khi dựng các slide 课文. */
+var vocabData = [
+  {hanzi:"适应", pinyin:"shìyìng", pos:"đgt.", meaning:"thích nghi",
+   examples:[
+    {zh:"我来中国半年了，已经适应这儿的生活了。", vi:"Tôi đến Trung Quốc được nửa năm rồi, đã thích nghi với cuộc sống ở đây."},
+    {zh:"刚开始工作的时候，他有点儿不适应。", vi:"Lúc mới bắt đầu đi làm, anh ấy hơi không thích nghi được."}]},
+  {hanzi:"交", pinyin:"jiāo", pos:"đgt.", meaning:"kết giao, kết bạn",
+   usage:[{pattern:"交朋友", note:"kết bạn — thường dùng với 朋友, chỉ việc làm quen và trở thành bạn"}],
+   examples:[
+    {zh:"他在大学交了很多好朋友。", vi:"Anh ấy đã kết giao được nhiều người bạn tốt ở đại học."},
+    {zh:"你应该多交一些中国朋友，这样汉语才能进步得更快。", vi:"Bạn nên kết giao thêm vài người bạn Trung Quốc, như vậy tiếng Trung mới tiến bộ nhanh hơn."}]},
+  {hanzi:"平时", pinyin:"píngshí", pos:"dt.", meaning:"lúc thường, ngày thường",
+   examples:[
+    {zh:"平时我很少看电视，只有周末才看。", vi:"Ngày thường tôi ít khi xem tivi, chỉ cuối tuần mới xem."},
+    {zh:"他平时话不多，可是跟朋友在一起的时候特别爱说笑。", vi:"Anh ấy lúc thường ít nói, nhưng khi ở cùng bạn bè thì rất hay nói cười."}]},
+  {hanzi:"逛", pinyin:"guàng", pos:"đgt.", meaning:"đi dạo, đi chơi (loanh quanh)",
+   examples:[
+    {zh:"周末我们常常一起去逛街。", vi:"Cuối tuần chúng tôi thường cùng nhau đi dạo phố."},
+    {zh:"她喜欢一个人逛书店。", vi:"Cô ấy thích một mình đi dạo hiệu sách."}]},
+  {hanzi:"短信", pinyin:"duǎnxìn", pos:"dt.", meaning:"tin nhắn",
+   examples:[
+    {zh:"到了以后请给我发个短信。", vi:"Đến nơi rồi thì nhắn tin cho tôi nhé."},
+    {zh:"他每天都给女朋友发短信。", vi:"Ngày nào anh ấy cũng nhắn tin cho bạn gái."}]},
+  {hanzi:"正好", pinyin:"zhènghǎo", pos:"phó.", meaning:"đúng lúc, được dịp, gặp dịp",
+   usage:[{pattern:"正好 + mệnh đề", note:"diễn tả sự trùng hợp — một việc xảy ra vừa vặn, đúng lúc với việc khác"}],
+   examples:[
+    {zh:"我正好也要去图书馆，我们一起走吧。", vi:"Tôi cũng đang định đi thư viện, chúng ta đi cùng nhau đi."},
+    {zh:"你来得正好，我正想找你呢。", vi:"Bạn đến đúng lúc quá, tôi đang định tìm bạn đây."}]},
+  {hanzi:"聚会", pinyin:"jùhuì", pos:"đgt./dt.", meaning:"gặp gỡ, cuộc họp mặt",
+   examples:[
+    {zh:"毕业以后，我们班很少聚会。", vi:"Sau khi tốt nghiệp, lớp chúng tôi rất ít khi họp mặt."},
+    {zh:"周末我们聚会，你能不能来？", vi:"Cuối tuần lớp chúng tôi họp mặt, bạn đến được không?"}]},
+  {hanzi:"联系", pinyin:"liánxì", pos:"đgt.", meaning:"liên hệ",
+   usage:[{pattern:"跟/和 + người + 联系", note:"liên hệ với ai đó — thường đi cùng giới từ 跟 hoặc 和"}],
+   examples:[
+    {zh:"毕业以后，我一直跟他保持联系。", vi:"Sau khi tốt nghiệp, tôi vẫn luôn giữ liên lạc với anh ấy."},
+    {zh:"你能不能帮我联系一下张老师？", vi:"Bạn có thể giúp tôi liên hệ với thầy Trương một chút được không?"}]},
+  {hanzi:"差不多", pinyin:"chàbuduō", pos:"phó.", meaning:"gần như, hầu như",
+   usage:[{pattern:"差不多 + số lượng/thời gian", note:"diễn tả một con số hay mức độ ước chừng, gần đúng"}],
+   examples:[
+    {zh:"教室里差不多坐满了学生。", vi:"Trong lớp học gần như đã ngồi kín học sinh."},
+    {zh:"从这儿到学校差不多要二十分钟。", vi:"Từ đây đến trường mất khoảng gần hai mươi phút."}]},
+  {hanzi:"专门", pinyin:"zhuānmén", pos:"phó.", meaning:"đặc biệt, riêng (dành cho một việc cụ thể)",
+   usage:[{pattern:"专门 + động từ", note:"nhấn mạnh một việc được làm riêng, có chủ đích, không phải tiện thể làm"}],
+   examples:[
+    {zh:"妈妈专门给我做了一个生日蛋糕。", vi:"Mẹ đã đặc biệt làm cho tôi một chiếc bánh sinh nhật."},
+    {zh:"他专门从北京飞过来参加我的婚礼。", vi:"Anh ấy đặc biệt bay từ Bắc Kinh đến để tham dự đám cưới của tôi."}]},
+  {hanzi:"毕业", pinyin:"bìyè", pos:"đgt.", meaning:"tốt nghiệp",
+   examples:[
+    {zh:"他去年从大学毕业了。", vi:"Năm ngoái anh ấy đã tốt nghiệp đại học."},
+    {zh:"毕业以后，你打算做什么工作？", vi:"Sau khi tốt nghiệp, bạn định làm công việc gì?"}]},
+  {hanzi:"麻烦", pinyin:"máfan", pos:"đgt.", meaning:"làm phiền",
+   usage:[{pattern:"麻烦你 + động từ (+ 一下)", note:"cách nói lịch sự khi nhờ vả ai làm việc gì đó"}],
+   examples:[
+    {zh:"麻烦你帮我开一下门，谢谢。", vi:"Phiền bạn mở giúp tôi cửa một chút, cảm ơn."},
+    {zh:"不好意思，麻烦你再说一遍。", vi:"Xin lỗi, phiền bạn nói lại một lần nữa."}]}
+];
+var vocabByLesson = { 3:[0,1,2,3,4,5], 4:[6,7,8,9,10,11] };
+var slideToLessonNum = {3:1, 4:2};
+
+function getVocabLessonLabel(idx){
+  var slideIds = Object.keys(vocabByLesson);
+  for(var i=0;i<slideIds.length;i++){
+    var slideId = slideIds[i];
+    if(vocabByLesson[slideId].indexOf(idx) !== -1){ return 'BK'+slideToLessonNum[slideId]; }
+  }
+  return '';
+}
+
+function renderFullVocabTable(){
+  var body = document.getElementById('vocabFullBody');
+  if(!body) return; /* Slide 生词总表 chưa được dựng — bỏ qua, tránh lỗi null */
+  var html = '';
+  vocabData.forEach(function(v, idx){
+    var lessonLabel = getVocabLessonLabel(idx);
+    var lessonNum = lessonLabel.replace('BK','');
+    html += '<tr onclick="openVocabModal('+idx+')">' +
+      '<td>'+(idx+1)+'</td>' +
+      '<td class="t-hanzi zh bk'+lessonNum+'">'+v.hanzi+(v.star?' <span class="bk-star" title="Điểm ngữ pháp chính">★</span>':'')+'</td>' +
+      '<td><em style="font-style:italic;">'+v.pinyin+'</em></td>' +
+      '<td>'+v.pos+'</td>' +
+      '<td>'+v.meaning+'</td>' +
+      '<td><span class="bk-badge bk'+lessonNum+'">'+lessonLabel+'</span></td>' +
+      '</tr>';
+  });
+  body.innerHTML = html;
+}
+renderFullVocabTable();
+
+/* ============ VOCAB MODAL + HANZI WRITER ============ */
+var hwInstances = {}, hwSpeed = {};
+
+/* ============ VOCAB IMAGE PATH (tu pinyin -> ten file khong dau) ============ */
+var TONE_MAP = {
+  'ā':'a','á':'a','ǎ':'a','à':'a',
+  'ē':'e','é':'e','ě':'e','è':'e',
+  'ī':'i','í':'i','ǐ':'i','ì':'i',
+  'ō':'o','ó':'o','ǒ':'o','ò':'o',
+  'ū':'u','ú':'u','ǔ':'u','ù':'u',
+  'ǖ':'v','ǘ':'v','ǚ':'v','ǜ':'v','ü':'v',
+  'ń':'n','ň':'n','ǹ':'n'
+};
+function slugifyPinyin(py){
+  var noTone = py.split('').map(function(ch){ return TONE_MAP[ch] || ch; }).join('');
+  return noTone.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function vocabImagePath(v){
+  return slugifyPinyin(v.pinyin) + '.png';
+}
+
+function openVocabModal(idx){
+  var v = vocabData[idx];
+  document.getElementById('mHanzi').textContent = v.hanzi;
+  document.getElementById('mPinyin').textContent = v.pinyin;
+  document.getElementById('mPos').textContent = v.pos;
+  document.getElementById('mMeaning').textContent = v.meaning;
+
+  var uWrap = document.getElementById('mUsageWrap');
+  var uContent = document.getElementById('mUsageContent');
+  var uBtn = document.getElementById('mUsageToggleBtn');
+  var starBadge = document.getElementById('mStarBadge');
+  if(v.star){
+    starBadge.style.display = '';
+    document.getElementById('mUsage').innerHTML = '<div class="modal-usage-item"><div class="usage-note">Đây là 1 trong 5 điểm ngữ pháp chính của bài — xem giải thích chi tiết trong file Ngữ pháp riêng.</div></div>';
+    uWrap.style.display = '';
+    uContent.classList.remove('show');
+    uBtn.textContent = '⚠️ Xem ghi chú';
+  } else if(v.usage && v.usage.length){
+    starBadge.style.display = 'none';
+    var uHtml = v.usage.map(function(u){
+      return '<div class="modal-usage-item"><div class="usage-pattern">'+u.pattern+'</div><div class="usage-note">'+u.note+'</div></div>';
+    }).join('');
+    document.getElementById('mUsage').innerHTML = uHtml;
+    uWrap.style.display = '';
+    uContent.classList.remove('show');
+    uBtn.textContent = '⚠️ Xem cách dùng cần lưu ý';
+  } else {
+    starBadge.style.display = 'none';
+    document.getElementById('mUsage').innerHTML = '';
+    uWrap.style.display = 'none';
+  }
+
+  var exTitle = document.getElementById('mExampleTitle');
+  if(v.examples && v.examples.length){
+    var exHtml = v.examples.map(function(ex, i){
+      var hl = ex.zh.split(v.hanzi).join('<span class="hl">'+v.hanzi+'</span>');
+      return '<div class="modal-example-item"><span class="ex-num">'+(i+1)+'</span><div><span class="zh">'+hl+'</span><div class="ex-vi">'+ex.vi+'</div></div></div>';
+    }).join('');
+    document.getElementById('mExample').innerHTML = exHtml;
+    exTitle.classList.add('show');
+  } else {
+    document.getElementById('mExample').innerHTML = '';
+    exTitle.classList.remove('show');
+  }
+
+  var imgWrap = document.getElementById('mIllustrationWrap');
+  var img = document.getElementById('mIllustration');
+  imgWrap.style.display = '';
+  img.alt = 'Hình minh hoạ: ' + v.hanzi;
+  img.src = vocabImagePath(v);
+
+  var chars = v.hanzi.replace(/[^\u4e00-\u9fff]/g,'').split('');
+  var row = document.getElementById('mHwRow');
+  var html = '';
+  chars.forEach(function(ch, i){
+    var slotId = 'modalHW_'+idx+'_'+i;
+    html += '<div class="hw-block">' +
+      '<div class="writer-canvas" id="'+slotId+'"></div>' +
+      '<div class="hw-btns">' +
+        '<button onclick="initWriter(\''+slotId+'\',\''+ch+'\')">▶ Xem bút thuận</button>' +
+        '<button onclick="hwQuiz(\''+slotId+'\',\''+ch+'\')">✍️ Tự luyện viết</button>' +
+      '</div>' +
+      '<input class="hw-speed" type="range" min="0.5" max="3" step="0.25" value="1" oninput="changeSpeed(\''+slotId+'\',\''+ch+'\', this.value)">' +
+      '<div class="quiz-feedback" id="'+slotId+'-feedback"></div>' +
+      '</div>';
+  });
+  row.innerHTML = html;
+  row.classList.remove('show');
+  document.getElementById('mHwToggleBtn').textContent = '✍️ Xem bút thuận';
+
+  document.getElementById('vocabModal').classList.add('show');
+}
+function closeVocabModal(){ document.getElementById('vocabModal').classList.remove('show'); }
+function toggleHwRow(){
+  var row = document.getElementById('mHwRow');
+  var btn = document.getElementById('mHwToggleBtn');
+  var showing = row.classList.toggle('show');
+  btn.textContent = showing ? '▲ Ẩn bút thuận' : '✍️ Xem bút thuận';
+}
+function toggleUsageBlock(){
+  var content = document.getElementById('mUsageContent');
+  var btn = document.getElementById('mUsageToggleBtn');
+  var showing = content.classList.toggle('show');
+  btn.textContent = showing ? '▲ Ẩn cách dùng' : '⚠️ Xem cách dùng cần lưu ý';
+}
+function initWriter(slotId, char){
+  document.getElementById(slotId).innerHTML = '';
+  if(typeof HanziWriter === 'undefined'){
+    document.getElementById(slotId).innerHTML =
+      '<div style="padding:10px;text-align:center;color:var(--ink-soft);font-size:0.75rem;">Không tải được thư viện bút thuận (cần internet).</div>';
+    return;
+  }
+  hwInstances[slotId] = HanziWriter.create(slotId, char, {
+    width: 180, height: 180, padding: 10,
+    strokeColor: '#E8384F', radicalColor: '#E5399A', showOutline: true,
+    strokeAnimationSpeed: hwSpeed[slotId] || 1, delayBetweenStrokes: 250
+  });
+  hwInstances[slotId].animateCharacter();
+}
+function changeSpeed(slotId, char, value){
+  hwSpeed[slotId] = parseFloat(value);
+  initWriter(slotId, char);
+}
+function hwQuiz(slotId, char){
+  if(!hwInstances[slotId]){ initWriter(slotId, char); }
+  var fb = document.getElementById(slotId + '-feedback');
+  if(!hwInstances[slotId] || typeof hwInstances[slotId].quiz !== 'function'){
+    if(fb) fb.textContent = 'Không tải được thư viện bút thuận (cần internet).';
+    return;
+  }
+  if(fb) fb.textContent = '✍️ Viết từng nét theo đúng thứ tự.';
+  hwInstances[slotId].quiz({
+    onCorrectStroke: function(data){ if(fb) fb.textContent = '✅ Đúng! Còn ' + data.strokesRemaining + ' nét.'; },
+    onMistake: function(){ if(fb) fb.textContent = '❌ Chưa đúng, thử lại nét này.'; },
+    onComplete: function(data){ if(fb) fb.textContent = '🎉 Hoàn thành! Số lần sai: ' + data.totalMistakes + '.'; }
+  });
+}
+document.getElementById('vocabModal').addEventListener('click', function(e){ if(e.target===this) closeVocabModal(); });
+
+function scrollToTop(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }
+window.addEventListener('scroll', function(){
+  var btn = document.getElementById('backToTopBtn');
+  if(!btn) return;
+  if(window.scrollY > 300){ btn.classList.add('show'); } else { btn.classList.remove('show'); }
+});
+
+/* ============ FULLSCREEN TOGGLE ============ */
+function toggleFullscreen(){
+  var el = document.documentElement;
+  var isFull = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+  if(!isFull){
+    if(el.requestFullscreen) el.requestFullscreen();
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if(el.msRequestFullscreen) el.msRequestFullscreen();
+  } else {
+    if(document.exitFullscreen) document.exitFullscreen();
+    else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+    else if(document.msExitFullscreen) document.msExitFullscreen();
+  }
+}
+function updateFullscreenIcon(){
+  var icon = document.getElementById('fullscreenIcon');
+  var btn = document.getElementById('fullscreenBtn');
+  var isFull = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+  if(!icon || !btn) return;
+  icon.textContent = isFull ? '⛶' : '⛶';
+  btn.title = isFull ? 'Thoát toàn màn hình' : 'Xem toàn màn hình';
+  btn.classList.toggle('is-full', !!isFull);
+}
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+document.addEventListener('msfullscreenchange', updateFullscreenIcon);
+
+/* ============ MATCH GAME (khoi dong 1) ============ */
+var selectedWord=null, selectedImg=null, matchedCount=0;
+function selectWord(el){
+  if(el.classList.contains('matched')) return;
+  document.querySelectorAll('.match-word.selected').forEach(function(w){ w.classList.remove('selected'); });
+  el.classList.add('selected'); selectedWord=el; tryMatch();
+}
+function selectImg(el){
+  if(el.classList.contains('matched')) return;
+  document.querySelectorAll('.match-img.selected').forEach(function(w){ w.classList.remove('selected'); });
+  el.classList.add('selected'); selectedImg=el; tryMatch();
+}
+function tryMatch(){
+  if(!selectedWord||!selectedImg) return;
+  var w=selectedWord, i=selectedImg;
+  if(w.getAttribute('data-pair')===i.getAttribute('data-pair')){
+    w.classList.remove('selected'); w.classList.add('matched');
+    i.classList.remove('selected'); i.classList.add('matched');
+    matchedCount++;
+    document.getElementById('matchProgress').textContent='Đã ghép đúng: '+matchedCount+' / 6';
+  } else {
+    w.classList.add('wrong'); i.classList.add('wrong');
+    setTimeout(function(){ w.classList.remove('selected','wrong'); i.classList.remove('selected','wrong'); }, 550);
+  }
+  selectedWord=null; selectedImg=null;
+}
+function resetMatchGame(){
+  matchedCount=0; selectedWord=null; selectedImg=null;
+  document.querySelectorAll('.match-word,.match-img').forEach(function(el){ el.classList.remove('matched','selected','wrong'); });
+  document.getElementById('matchProgress').textContent='Đã ghép đúng: 0 / 6';
+}
+function togglePinyin(){
+  var grid = document.querySelector('.match-words-grid');
+  var btn = document.getElementById('pinyinToggleBtn');
+  var hidden = grid.classList.toggle('hide-pinyin');
+  btn.textContent = hidden ? '👁️' : '🙈';
+  btn.title = hidden ? 'Hiện pinyin' : 'Ẩn pinyin';
+}
+
+/* ============ SURVEY TABLE (khoi dong 2) ============ */
+var activeStudent = 1;
+function selectStudent(n){
+  activeStudent = n;
+  document.querySelectorAll('.student-btn').forEach(function(btn){ btn.classList.remove('active'); });
+  document.getElementById('student-btn-' + n).classList.add('active');
+}
+function toggleSurveyCell(el){
+  var key = 's' + activeStudent;
+  var dotsWrap = el.querySelector('.survey-dots');
+  var existing = dotsWrap.querySelector('.dot-' + key);
+  if(existing){
+    existing.remove();
+  } else {
+    var dot = document.createElement('span');
+    dot.className = 'survey-dot dot-' + key;
+    dot.textContent = '✓';
+    dotsWrap.appendChild(dot);
+  }
+}
+function resetSurveyTable(){
+  document.querySelectorAll('.survey-cell .survey-dots').forEach(function(w){ w.innerHTML = ''; });
+}
+
+/* ============ VONG QUAY ON TAP ============ */
+/* Cau hoi nho, nhanh - khong trung voi 2 cau hoi lon da co san
+   trong hop "根据课文内容回答问题" cua tung 课文.
+   reviewQuestions cho Bài 2 se duoc dien khi dung cac slide 课文. */
+var reviewQuestions = [
+  /* BK1 - 课文1: 小夏和马克聊马克的中国朋友 */
+  {zh:"马克是在哪儿认识他的中国朋友的？", ans:"马克是在图书馆认识他的中国朋友的。", bk:"BK1"},
+  {zh:"马克和他的中国朋友平时常常做什么？", ans:"他们常常一起看书、逛街、踢足球，有时候还互相发幽默短信。", bk:"BK1"},
+  {zh:"马克他们下午要做什么？", ans:"他们下午要去踢足球。", bk:"BK1"},
+  /* BK2 - 课文2: 小李和小林聊同学聚会的事情 */
+  {zh:"小李他们班的同学聚会是什么时候？在哪儿？几点？", ans:"聚会是星期天，在学校门口那个饭店，六点半。", bk:"BK2"},
+  {zh:"小林今天早上在地铁站遇到了谁？她现在做什么工作？", ans:"小林今天早上在地铁站遇到了王静，她毕业后去上海工作了。", bk:"BK2"},
+  {zh:"小李请小林帮忙做什么？", ans:"小李请小林跟王静联系一下，请她也来参加同学聚会。", bk:"BK2"}
+];
+
+/* Xao mang theo Fisher-Yates */
+function shuffleArray(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+/* Tao 1 "tui rut bai": rut khong hoan lai tu items; khi rut het thi xao lai,
+   va co gang khong de phan tu vua rut cuoi cung lap lai ngay dau tui moi
+   (chi ap dung khi items.length > 1) */
+function createDrawBag(items){
+  var bag = shuffleArray(items);
+  var pos = 0;
+  return function draw(){
+    if(pos >= bag.length){
+      var last = bag[bag.length-1];
+      var tries = 0;
+      do{
+        bag = shuffleArray(items);
+        tries++;
+      } while(items.length > 1 && bag[0] === last && tries < 10);
+      pos = 0;
+    }
+    var val = bag[pos];
+    pos++;
+    return val;
+  };
+}
+
+/* Dung 1 cau vi du co san cua tu vung, an tu vung thanh cho trong,
+   sinh 3 nut dap an (1 dung + 2 nhieu lay tu cung pham vi vocabIndices cua vong quay) */
+function buildVocabQuizHtml(prefix, correctIdx, vocabIndices){
+  var v = vocabData[correctIdx];
+  var ex = (v.examples && v.examples.length) ? v.examples[0] : null;
+  var sentenceHtml;
+  if(ex && ex.zh.indexOf(v.hanzi) !== -1){
+    sentenceHtml = ex.zh.split(v.hanzi).join('<span class="wr-quiz-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+  } else {
+    sentenceHtml = '<span class="wr-quiz-blank">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+  }
+  var distractorPool = vocabIndices.filter(function(i){ return i !== correctIdx; });
+  var distractors = shuffleArray(distractorPool).slice(0, 2);
+  var optionIdxs = shuffleArray([correctIdx].concat(distractors));
+  var optsHtml = '<div class="wr-quiz-options">';
+  optionIdxs.forEach(function(oi){
+    var isCorrect = (oi === correctIdx) ? '1' : '0';
+    optsHtml += '<button class="wr-quiz-opt zh" data-correct="'+isCorrect+'" onclick="reviewWheelCheckAnswer(this,\''+prefix+'\')">'+vocabData[oi].hanzi+'</button>';
+  });
+  optsHtml += '</div>';
+  return '<div class="wr-quiz-sentence zh">'+sentenceHtml+'</div>' + optsHtml +
+         '<div class="wr-quiz-feedback" id="'+prefix+'QuizFeedback"></div>';
+}
+
+/* Xu ly khi hoc sinh bam chon 1 dap an trong quiz dien cau tren vong quay */
+function reviewWheelCheckAnswer(btn, prefix){
+  var options = btn.parentElement.querySelectorAll('.wr-quiz-opt');
+  var isCorrect = btn.getAttribute('data-correct') === '1';
+  options.forEach(function(b){
+    b.disabled = true;
+    if(b.getAttribute('data-correct') === '1'){ b.classList.add('correct'); }
+  });
+  if(!isCorrect){ btn.classList.add('wrong'); }
+  var fb = document.getElementById(prefix+'QuizFeedback');
+  fb.textContent = isCorrect ? '✅ Chính xác!' : '❌ Chưa đúng — đáp án đúng đang được tô xanh.';
+  fb.className = 'wr-quiz-feedback ' + (isCorrect ? 'ok' : 'no');
+}
+
+/* Factory: tao 1 bo dieu khien vong quay doc lap, dung chung id prefix
+   vd: prefix "wrMid" -> can co cac id: wrMidDisc, wrMidCenterBtn (khong bat buoc),
+   wrMidResult, wrMidTag, wrMidContent, wrMidSub, wrMidRevealBtn */
+function createReviewWheel(prefix, vocabIndices, questionList){
+  var rotation = 0;
+  var spinning = false;
+  var drawVocab = createDrawBag(vocabIndices);
+  var drawQuestion = createDrawBag(questionList);
+  function spin(){
+    if(spinning) return;
+    spinning = true;
+    document.getElementById(prefix+'Result').style.display = 'none';
+    var extraTurns = 5 + Math.floor(Math.random()*3);
+    var randomOffset = Math.random()*360;
+    rotation += extraTurns*360 + randomOffset;
+    var disc = document.getElementById(prefix+'Disc');
+    disc.style.transform = 'rotate('+rotation+'deg)';
+    setTimeout(function(){
+      spinning = false;
+      var normalized = ((360 - (rotation % 360)) % 360);
+      var sliceIndex = Math.floor(normalized / 45) % 8;
+      var isVocab = (sliceIndex % 2 === 0);
+      var tagEl = document.getElementById(prefix+'Tag');
+      var contentEl = document.getElementById(prefix+'Content');
+      var subEl = document.getElementById(prefix+'Sub');
+      var revealBtn = document.getElementById(prefix+'RevealBtn');
+      if(isVocab){
+        var vIdx = drawVocab();
+        var v = vocabData[vIdx];
+        tagEl.textContent = '📚 Chọn từ đúng để hoàn thành câu';
+        tagEl.className = 'wr-tag vocab';
+        subEl.textContent = '';
+        subEl.style.display = 'none';
+        revealBtn.style.display = 'none';
+        contentEl.className = 'wr-content';
+        contentEl.innerHTML = buildVocabQuizHtml(prefix, vIdx, vocabIndices);
+      } else {
+        var q = drawQuestion();
+        tagEl.textContent = '❓ Câu hỏi ôn bài — trả lời miệng';
+        tagEl.className = 'wr-tag question';
+        contentEl.className = 'wr-content zh';
+        contentEl.textContent = q.zh;
+        subEl.textContent = q.ans || '';
+        subEl.className = 'wr-sub zh';
+        subEl.style.display = 'none';
+        revealBtn.style.display = 'inline-block';
+        revealBtn.textContent = '👁️ Xem đáp án';
+      }
+      document.getElementById(prefix+'Result').style.display = 'block';
+    }, 3650);
+  }
+  function toggleAnswer(){
+    var subEl = document.getElementById(prefix+'Sub');
+    var btn = document.getElementById(prefix+'RevealBtn');
+    var showing = subEl.style.display === 'block';
+    subEl.style.display = showing ? 'none' : 'block';
+    btn.textContent = showing ? '👁️ Xem đáp án' : '🙈 Ẩn đáp án';
+  }
+  return { spin: spin, toggleAnswer: toggleAnswer };
+}
+
+/* Bai co 3 课文 (<=3) nen chi 1 vong quay duy nhat, gom toan bo 课文 1-3. */
+var wheelEndVocabIndices = vocabByLesson[3].concat(vocabByLesson[4], vocabByLesson[5]);
+var wheelEndQuestions = reviewQuestions.filter(function(q){
+  return q.bk === 'BK1' || q.bk === 'BK2' || q.bk === 'BK3';
+});
+var wheelEnd = createReviewWheel('wrEnd', wheelEndVocabIndices, wheelEndQuestions);
+
+/* ============ KEO THA DAP AN (Bai tap dien tu - slide cuoi) ============ */
+(function(){
+  var activeChip = null;
+
+  function initFbDrag(){
+    document.querySelectorAll('.fb-chip').forEach(function(chip){
+      chip.addEventListener('pointerdown', onChipDown);
+    });
+  }
+
+  function zoneUnderPoint(x, y, chip){
+    chip.style.pointerEvents = 'none';
+    var el = document.elementFromPoint(x, y);
+    chip.style.pointerEvents = '';
+    return el ? el.closest('.fb-dropzone') : null;
+  }
+
+  function clearDragoverHighlights(){
+    document.querySelectorAll('.fb-dropzone.dragover').forEach(function(z){
+      z.classList.remove('dragover');
+    });
+  }
+
+  function onChipDown(e){
+    var chip = e.currentTarget;
+    if(chip.classList.contains('chip-placed')) return;
+    activeChip = chip;
+    chip._startX = e.clientX;
+    chip._startY = e.clientY;
+    chip.style.transition = 'none';
+    chip.classList.add('dragging');
+    try{ chip.setPointerCapture(e.pointerId); }catch(err){}
+    chip.addEventListener('pointermove', onChipMove);
+    chip.addEventListener('pointerup', onChipUp);
+    chip.addEventListener('pointercancel', onChipUp);
+    e.preventDefault();
+  }
+
+  function onChipMove(e){
+    if(!activeChip) return;
+    var dx = e.clientX - activeChip._startX;
+    var dy = e.clientY - activeChip._startY;
+    activeChip.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    clearDragoverHighlights();
+    var zone = zoneUnderPoint(e.clientX, e.clientY, activeChip);
+    if(zone && !zone.classList.contains('filled')) zone.classList.add('dragover');
+  }
+
+  function onChipUp(e){
+    if(!activeChip) return;
+    var chip = activeChip;
+    activeChip = null;
+    chip.removeEventListener('pointermove', onChipMove);
+    chip.removeEventListener('pointerup', onChipUp);
+    chip.removeEventListener('pointercancel', onChipUp);
+    chip.classList.remove('dragging');
+    clearDragoverHighlights();
+
+    var zone = zoneUnderPoint(e.clientX, e.clientY, chip);
+
+    if(zone && !zone.classList.contains('filled') && zone.dataset.group === chip.dataset.group){
+      if(zone.dataset.answer === chip.dataset.word){
+        placeChipCorrect(chip, zone);
+        return;
+      } else {
+        chip.classList.add('chip-wrong');
+        setTimeout(function(){
+          chip.classList.remove('chip-wrong');
+          returnChipHome(chip);
+        }, 600);
+        return;
+      }
+    }
+    returnChipHome(chip);
+  }
+
+  function returnChipHome(chip){
+    chip.style.transition = 'transform .35s cubic-bezier(.34,1.4,.64,1)';
+    chip.style.transform = 'translate(0,0)';
+    setTimeout(function(){
+      chip.style.transition = '';
+      chip.style.transform = '';
+    }, 360);
+  }
+
+  function placeChipCorrect(chip, zone){
+    chip.style.transition = '';
+    chip.style.transform = '';
+    chip.classList.add('chip-placed', 'chip-correct');
+    zone.classList.add('filled');
+    zone.appendChild(chip);
+  }
+
+  window.resetFbGroup = function(groupKey){
+    var group = document.querySelector('.fb-group[data-group="' + groupKey + '"]');
+    if(!group) return;
+    var bank = group.querySelector('.fb-bank');
+    group.querySelectorAll('.fb-dropzone').forEach(function(zone){
+      var chip = zone.querySelector('.fb-chip');
+      zone.classList.remove('filled', 'dragover');
+      if(chip){
+        chip.classList.remove('chip-placed', 'chip-correct', 'chip-wrong');
+        chip.style.transform = '';
+        chip.style.transition = '';
+        bank.appendChild(chip);
+      }
+    });
+  };
+
+  initFbDrag();
+})();
+</script>
+</body>
+</html>
